@@ -11,7 +11,16 @@ let package = Package(
   ],
   targets: [
     .target(
-      name: "NewAndNowFeature"
+      name: "NewAndNowFeature",
+      dependencies: [
+        "ApiClient"
+      ]
     ),
+    .target(
+      name: "ApiClient",
+      resources: [
+        .process("Resources")
+      ]
+    )
   ]
 )
