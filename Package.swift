@@ -9,18 +9,25 @@ let package = Package(
       name: "NewAndNowFeature",
       targets: ["NewAndNowFeature"]),
   ],
+  dependencies: [
+    .package(url: "https://github.com/pointfreeco/swift-composable-architecture", branch: "main"),
+    .package(url: "https://github.com/pointfreeco/swift-dependencies", branch: "main")
+  ],
   targets: [
     .target(
       name: "NewAndNowFeature",
       dependencies: [
-        "ApiClient"
+        "ApiClient",
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
       ]
     ),
     .target(
       name: "ApiClient",
-      resources: [
-        .process("Resources")
-      ]
+      dependencies: [
+        .product(name: "Dependencies", package: "swift-dependencies"),
+        .product(name: "DependenciesMacros", package: "swift-dependencies")
+      ],
+      resources: [.process("Resources")]
     )
   ]
 )

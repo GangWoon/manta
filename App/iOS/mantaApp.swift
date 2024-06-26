@@ -1,17 +1,11 @@
-//
-//  mantaApp.swift
-//  manta
-//
-//  Created by Cloud on 6/24/24.
-//
-
+import NewAndNowFeature
 import SwiftUI
 
 @main
 struct mantaApp: App {
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
+  var body: some Scene {
+    WindowGroup {
+      NewAndNowView()
     }
+  }
 }
