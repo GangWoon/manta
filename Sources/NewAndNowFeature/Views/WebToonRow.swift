@@ -91,15 +91,18 @@ struct WebToonRow: View {
   
   private var notifyButton: some View {
     Button(action: { notifyAction() }) {
-      Text("Notify me")
-        .font(.system(size: 16).bold())
-        .foregroundStyle(.white)
-        .padding(.vertical, 8)
-        .frame(maxWidth: .infinity)
-        .background {
-          RoundedRectangle(cornerRadius: 8)
-            .foregroundColor(Color(hex: "#D3D3D3").opacity(0.6))
-        }
+      HStack {
+        Image(systemName: "bell")
+        Text("Notify me")
+          .font(.system(size: 16).bold())
+      }
+      .foregroundStyle(.white)
+      .padding(.vertical, 8)
+      .frame(maxWidth: .infinity)
+      .background {
+        RoundedRectangle(cornerRadius: 8)
+          .foregroundColor(Color(hex: "#D3D3D3").opacity(0.6))
+      }
     }
   }
   
