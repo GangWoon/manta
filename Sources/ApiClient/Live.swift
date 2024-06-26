@@ -1,7 +1,16 @@
+import DependenciesMacros
+import Dependencies
 import Foundation
 
-extension ApiClient {
-  public static let live = Self {
+extension DependencyValues {
+  public var apiClient: ApiClient {
+    get { self[ApiClient.self] }
+    set { self[ApiClient.self] = newValue }
+  }
+}
+
+extension ApiClient: DependencyKey {
+  public static let liveValue: ApiClient = Self {
     guard
       let path = Bundle.module.path(forResource: "data", ofType: "json")
     else { throw _Error.unexpected }

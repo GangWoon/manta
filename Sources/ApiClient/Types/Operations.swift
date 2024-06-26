@@ -30,30 +30,3 @@ public enum Operations {
     }
   }
 }
-
-public enum Components {
-  public enum Schemas { }
-}
-
-extension Components.Schemas {
-  public struct NewAndNow: Codable, Sendable {
-    public struct WebToon: Codable, Sendable {
-      var releaseDate: Date
-      var title: String
-      var thumbnail: String
-      var tags: [String]
-      var summary: String
-      var ageRating: String
-      var creators: Creators
-      public struct Creators: Codable, Sendable {
-        var production: String?
-        var illustration: String?
-        var writer: String?
-        var originalStory: String?
-        var localization: String?
-      }
-    }
-    var comingSoon: [WebToon]
-    var newArrivals: [WebToon]
-  }
-}
