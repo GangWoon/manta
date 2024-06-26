@@ -11,6 +11,7 @@ extension Components.Schemas {
       public var releaseDate: Date
       public var title: String
       public var thumbnail: String
+      public var thumbnailColor: String
       public var tags: [String]
       public var summary: String
       public var ageRating: String
@@ -29,6 +30,7 @@ extension Components.Schemas {
         self.releaseDate = try container.decode(Date.self, forKey: Components.Schemas.NewAndNow.WebToon.CodingKeys.releaseDate)
         self.title = try container.decode(String.self, forKey: Components.Schemas.NewAndNow.WebToon.CodingKeys.title)
         self.thumbnail = try container.decode(String.self, forKey: Components.Schemas.NewAndNow.WebToon.CodingKeys.thumbnail)
+        self.thumbnailColor = try container.decode(String.self, forKey: Components.Schemas.NewAndNow.WebToon.CodingKeys.thumbnailColor)
         self.tags = try container.decode([String].self, forKey: Components.Schemas.NewAndNow.WebToon.CodingKeys.tags)
         self.summary = try container.decode(String.self, forKey: Components.Schemas.NewAndNow.WebToon.CodingKeys.summary)
         self.ageRating = try container.decode(String.self, forKey: Components.Schemas.NewAndNow.WebToon.CodingKeys.ageRating)
