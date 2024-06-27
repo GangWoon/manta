@@ -5,30 +5,25 @@ import ApiClient
 @Reducer
 public struct NewAndNowCore {
   @ObservableState
-  public struct State: Equatable {
-    public var comingSoonList: [Components.Schemas.NewAndNow.WebToon]
-    public var newArrivalsList: [Components.Schemas.NewAndNow.WebToon]
-    
-    public init(
-      comingSoonList: [Components.Schemas.NewAndNow.WebToon] = [],
-      newArrivalsList: [Components.Schemas.NewAndNow.WebToon] = []
-    ) {
-      self.comingSoonList = comingSoonList
-      self.newArrivalsList = newArrivalsList
-    }
+  public struct State: Equatable, Sendable {
+    public var webToonList: IdentifiedArrayOf<WebToonCore.State> = []
   }
   
-  public enum Action: Equatable {
+  public enum Action: Equatable, Sendable {
     case prepare
     case fetchResponse(Components.Schemas.NewAndNow)
+    case webToonList(IdentifiedActionOf<WebToonCore>)
   }
   
   @Dependency(\.apiClient) var apiClient
+  @Dependency(\.uuid) var uuid
   
   public init() { }
   
   public var body: some ReducerOf<Self> {
-    Reduce { state, action in
+    Reduce {
+      state,
+      action in
       switch action {
       case .prepare:
         return .run { send in
@@ -45,12 +40,38 @@ public struct NewAndNowCore {
             print(error)
           }
         }
-      
+        
       case .fetchResponse(let data):
-        state.comingSoonList = data.comingSoon
-        state.newArrivalsList = data.newArrivals
+        let comingSoon = data.comingSoon
+          .map { $0.webToonState(uuid(), type: .comingSoon) }
+//        let newArrivals = data.newArrivals
+//          .map { $0.webToonState(uuid(), type: .newArrivals) }
+        state.webToonList.append(contentsOf: comingSoon)
+        
+        return .none
+        
+      case .webToonList:
         return .none
       }
     }
+    .forEach(\.webToonList, action: \.webToonList) {
+      WebToonCore()
+    }
+    
+  }
+}
+
+private extension Components.Schemas.NewAndNow.WebToon {
+  func webToonState(_ id: UUID, type: WebToonCore.State.ReleaseStatus) -> WebToonCore.State {
+    .init(
+      id: id,
+      type: type,
+      title: title,
+      tags: tags,
+      thumbnailURL: thumbnail,
+      thumbnailColor: thumbnailColor,
+      summary: summary,
+      episodes: []
+    )
   }
 }

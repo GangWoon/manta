@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import ApiClient
 import SwiftUI
 
 @Reducer
@@ -7,7 +8,7 @@ struct EpisodesCore {
   struct State: Equatable {
     // MARK: - ViewState
     var thumbnailEpisodeURL: URL? {
-      URL(string: episodes.first?.thumbnail ?? "")
+      episodes.first?.thumbnail
     }
     var title: String {
       isExpanded
@@ -21,7 +22,7 @@ struct EpisodesCore {
     
     var isExpanded: Bool = false
     var colorCode: String
-    var episodes: [Episode]
+    var episodes: [Components.Schemas.NewAndNow.WebToon.Episode]
   }
   
   enum Action: Equatable {
@@ -39,26 +40,6 @@ struct EpisodesCore {
       case .episodeTapped(let id):
         return .none
       }
-    }
-  }
-}
-
-struct Episode: Sendable, Comparable, Identifiable {
-  var id: UUID = .init()
-  var title: String {
-    "S\(seasonNumber) Episode \(episodeNumber)"
-  }
-  var seasonNumber: Int
-  var episodeNumber: Int
-  var thumbnail: String
-  
-  static func < (lhs: Episode, rhs: Episode) -> Bool {
-    if lhs.seasonNumber < rhs.seasonNumber {
-      return true
-    } else if lhs.seasonNumber == rhs.seasonNumber {
-      return lhs.episodeNumber < rhs.episodeNumber
-    } else {
-      return false
     }
   }
 }
@@ -113,23 +94,23 @@ struct EpisodesView: View {
   private var expanded: some View {
     ScrollView(.horizontal) {
       LazyHStack {
-        ForEach(store.episodes) { episode in
-          VStack {
-            LazyImage(url: URL(string: episode.thumbnail)) { image in
-              image
-                .resizable()
-                .aspectRatio(1, contentMode: .fill)
-                .cornerRadius(6)
-                .frame(height: 64)
-            } placeholder: {
-              Color.clear
-            }
-            
-            Text(episode.title)
-              .font(.system(size: 10))
-              .foregroundStyle(Color.white)
-          }
-        }
+//        ForEach(store.episodes) { episode in
+//          VStack {
+//            LazyImage(url: episode.thumbnail) { image in
+//              image
+//                .resizable()
+//                .aspectRatio(1, contentMode: .fill)
+//                .cornerRadius(6)
+//                .frame(height: 64)
+//            } placeholder: {
+//              Color.clear
+//            }
+//            
+//            Text(episode.title)
+//              .font(.system(size: 10))
+//              .foregroundStyle(Color.white)
+//          }
+//        }
       }
     }
     .transition(.opacity)
@@ -137,18 +118,18 @@ struct EpisodesView: View {
   }
 }
 
-#Preview {
-  EpisodesView(
-    store: Store(
-      initialState: EpisodesCore.State(
-        colorCode: "#708090",
-        episodes: [
-          .init(seasonNumber: 1, episodeNumber: 1, thumbnail: "https://github.com/GangWoon/manta/assets/48466830/5e5081d7-d42d-4cd4-ae16-59d24f1d7456"),
-          .init(seasonNumber: 1, episodeNumber: 2, thumbnail: "https://github.com/GangWoon/manta/assets/48466830/c6739595-4236-4036-b06a-d15cabb795ce")
-        ]
-      ),
-      reducer: EpisodesCore.init
-    )
-  )
-}
-
+//#Preview {
+//  EpisodesView(
+//    store: Store(
+//      initialState: EpisodesCore.State(
+//        colorCode: "#708090",
+//        episodes: [
+//          .init(seasonNumber: 1, episodeNumber: 1, thumbnail: ""),
+//          .init(seasonNumber: 1, episodeNumber: 2, thumbnail: "https://github.com/GangWoon/manta/assets/48466830/c6739595-4236-4036-b06a-d15cabb795ce")
+//        ]
+//      ),
+//      reducer: EpisodesCore.init
+//    )
+//  )
+//}
+//
