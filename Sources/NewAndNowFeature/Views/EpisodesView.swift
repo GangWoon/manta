@@ -3,34 +3,36 @@ import ApiClient
 import SwiftUI
 
 @Reducer
-struct EpisodesCore {
+public struct EpisodesCore {
   @ObservableState
-  struct State: Equatable {
+  public struct State: Equatable {
     // MARK: - ViewState
-    var thumbnailEpisodeURL: URL? {
+    fileprivate var thumbnailEpisodeURL: URL? {
       episodes.first?.thumbnail
     }
-    var title: String {
+    fileprivate var title: String {
       isExpanded
       ? "\(episodes.count) Episodes"
       : "Binge past seasons"
     }
-    
-    var arrowName: String {
-      "chevron." + (isExpanded ? "up" : "down")
+    fileprivate var arrowImageName: String {
+      "chevron.\(isExpanded ? "up": "down")"
     }
     
+    var isEmpty: Bool {
+      episodes.isEmpty
+    }
     var isExpanded: Bool = false
     var colorCode: String
     var episodes: [Components.Schemas.NewAndNow.WebToon.Episode]
   }
   
-  enum Action: Equatable {
+  public enum Action: Equatable, Sendable {
     case arrowToggleButtonTapped
     case episodeTapped(UUID)
   }
   
-  var body: some ReducerOf<Self> {
+  public var body: some ReducerOf<Self> {
     Reduce { state, action in
       switch action {
       case .arrowToggleButtonTapped:
@@ -48,16 +50,19 @@ struct EpisodesView: View {
   let store: StoreOf<EpisodesCore>
   
   var body: some View {
-    VStack {
+    VStack(spacing: 0) {
       collapsed
         .frame(height: 24)
       
-      if store.isExpanded {
-        expanded
-      }
+      expanded
+        .transition(.opacity)
+        .frame(height: store.isExpanded ? 80 : 0)
+        .opacity(store.isExpanded ? 1 : 0)
     }
     .animation(.easeInOut, value: store.isExpanded)
-    .padding(8)
+    .transition(.opacity)
+    .padding(.horizontal, 16)
+    .padding(.vertical, 8)
     .background {
       RoundedRectangle(cornerRadius: 9)
         .fill(Color(hex: store.colorCode))
@@ -65,7 +70,7 @@ struct EpisodesView: View {
   }
   
   private var collapsed: some View {
-    HStack {
+    HStack(spacing: store.isExpanded ? 0 : 4) {
       LazyImage(url: store.thumbnailEpisodeURL) { image in
         image
           .resizable()
@@ -84,7 +89,7 @@ struct EpisodesView: View {
       
       Spacer()
       
-      Image(systemName: store.arrowName)
+      Image(systemName: store.arrowImageName)
         .font(.system(size: 11).bold())
     }
     .foregroundStyle(.white)
@@ -92,44 +97,44 @@ struct EpisodesView: View {
   }
   
   private var expanded: some View {
-    ScrollView(.horizontal) {
+    ScrollView(.horizontal, showsIndicators: false) {
       LazyHStack {
-//        ForEach(store.episodes) { episode in
-//          VStack {
-//            LazyImage(url: episode.thumbnail) { image in
-//              image
-//                .resizable()
-//                .aspectRatio(1, contentMode: .fill)
-//                .cornerRadius(6)
-//                .frame(height: 64)
-//            } placeholder: {
-//              Color.clear
-//            }
-//            
-//            Text(episode.title)
-//              .font(.system(size: 10))
-//              .foregroundStyle(Color.white)
-//          }
-//        }
+        ForEach(store.episodes) { episode in
+          VStack {
+            LazyImage(url: episode.thumbnail) { image in
+              image
+                .resizable()
+                .aspectRatio(1, contentMode: .fill)
+                .cornerRadius(6)
+                .frame(height: 64)
+            } placeholder: {
+              Color.clear
+            }
+            
+            Text(episode.title)
+              .font(.system(size: 10))
+              .foregroundStyle(Color.white)
+          }
+        }
       }
     }
-    .transition(.opacity)
-    .frame(height: 80)
   }
 }
 
-//#Preview {
-//  EpisodesView(
-//    store: Store(
-//      initialState: EpisodesCore.State(
-//        colorCode: "#708090",
-//        episodes: [
-//          .init(seasonNumber: 1, episodeNumber: 1, thumbnail: ""),
-//          .init(seasonNumber: 1, episodeNumber: 2, thumbnail: "https://github.com/GangWoon/manta/assets/48466830/c6739595-4236-4036-b06a-d15cabb795ce")
-//        ]
-//      ),
-//      reducer: EpisodesCore.init
-//    )
-//  )
-//}
-//
+#Preview {
+  EpisodesView(
+    store: Store(
+      initialState: EpisodesCore.State(
+        colorCode: "#708090",
+        episodes: [
+          .init(
+            title: "S1 Episode 1",
+            thumbnail: URL(string: "https://github.com/GangWoon/manta/assets/48466830/c6739595-4236-4036-b06a-d15cabb795ce")
+          )
+        ]
+      ),
+      reducer: EpisodesCore.init
+    )
+  )
+}
+
