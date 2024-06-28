@@ -1,3 +1,4 @@
+import Perception
 import SwiftUI
 
 public struct LazyImage<Content: View>: View {
@@ -36,14 +37,16 @@ public struct LazyImage<Content: View>: View {
   }
   
   public var body: some View {
-    content(phase)
-      .task(id: url) {
-        do {
-          try await fetch()
-        } catch {
-          phase = .failure(error)
+    WithPerceptionTracking {
+      content(phase)
+        .task(id: url) {
+          do {
+            try await fetch()
+          } catch {
+            phase = .failure(error)
+          }
         }
-      }
+    }
   }
   
   private func fetch() async throws {

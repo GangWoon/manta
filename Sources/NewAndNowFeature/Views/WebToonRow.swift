@@ -44,35 +44,37 @@ struct WebToonRow: View {
   let store: StoreOf<WebToonCore>
   
   var body: some View {
-    VStack(spacing: 2) {
-      VStack(alignment: .leading) {
-        Spacer()
-        
-        Text(store.title)
-          .font(.system(size: 22).bold())
-          .foregroundStyle(.white)
-        
+    WithPerceptionTracking {
+      VStack(spacing: 2) {
         VStack(alignment: .leading) {
-          tagList
-          summaryView
-          notifyButton
+          Spacer()
+          
+          Text(store.title)
+            .font(.system(size: 22).bold())
+            .foregroundStyle(.white)
+          
+          VStack(alignment: .leading) {
+            tagList
+            summaryView
+            notifyButton
+          }
+          .padding(.bottom, 16)
         }
-        .padding(.bottom, 16)
-      }
-      .frame(height: store.episodes.isEmpty ? 500 : 600)
-      .padding(.horizontal, 16)
-      .background { dimmingView }
-      .background { thumbnail }
-      .cornerRadius(10)
-     
-      if !store.episodes.isEmpty {
-        VStack {
-          collapsed
-        }
-        .padding(8)
-        .background {
-          RoundedRectangle(cornerRadius: 9)
-            .fill(Color(hex: store.thumbnailColor))
+        .frame(height: store.episodes.isEmpty ? 500 : 600)
+        .padding(.horizontal, 16)
+        .background { dimmingView }
+        .background { thumbnail }
+        .cornerRadius(10)
+       
+        if !store.episodes.isEmpty {
+          VStack {
+            collapsed
+          }
+          .padding(8)
+          .background {
+            RoundedRectangle(cornerRadius: 9)
+              .fill(Color(hex: store.thumbnailColor))
+          }
         }
       }
     }

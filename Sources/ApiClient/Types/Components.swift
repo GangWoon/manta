@@ -27,7 +27,8 @@ extension Components.Schemas {
       }
       
       public var episodes: [Episode]
-      public struct Episode: Sendable, Equatable {
+      public struct Episode: Sendable, Equatable, Identifiable {
+        public var id: String { title }
         public var title: String
         public var thumbnail: URL?
         public init(title: String, thumbnail: URL? = nil) {

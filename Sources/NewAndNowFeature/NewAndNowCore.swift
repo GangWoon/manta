@@ -7,6 +7,9 @@ public struct NewAndNowCore {
   @ObservableState
   public struct State: Equatable, Sendable {
     public var webToonList: IdentifiedArrayOf<WebToonCore.State> = []
+    public init() {
+      
+    }
   }
   
   public enum Action: Equatable, Sendable {

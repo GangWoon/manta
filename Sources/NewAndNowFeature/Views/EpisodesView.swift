@@ -50,22 +50,24 @@ struct EpisodesView: View {
   let store: StoreOf<EpisodesCore>
   
   var body: some View {
-    VStack(spacing: 0) {
-      collapsed
-        .frame(height: 24)
-      
-      expanded
-        .transition(.opacity)
-        .frame(height: store.isExpanded ? 80 : 0)
-        .opacity(store.isExpanded ? 1 : 0)
-    }
-    .animation(.easeInOut, value: store.isExpanded)
-    .transition(.opacity)
-    .padding(.horizontal, 16)
-    .padding(.vertical, 8)
-    .background {
-      RoundedRectangle(cornerRadius: 9)
-        .fill(Color(hex: store.colorCode))
+    WithPerceptionTracking {
+      VStack(spacing: 0) {
+        collapsed
+          .frame(height: 24)
+        
+        expanded
+          .transition(.opacity)
+          .frame(height: store.isExpanded ? 80 : 0)
+          .opacity(store.isExpanded ? 1 : 0)
+      }
+      .animation(.easeInOut, value: store.isExpanded)
+      .transition(.opacity)
+      .padding(.horizontal, 16)
+      .padding(.vertical, 8)
+      .background {
+        RoundedRectangle(cornerRadius: 9)
+          .fill(Color(hex: store.colorCode))
+      }
     }
   }
   

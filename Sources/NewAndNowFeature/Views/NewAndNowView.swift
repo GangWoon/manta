@@ -10,23 +10,25 @@ public struct NewAndNowView: View {
   }
   
   public var body: some View {
-    VStack {
-      dashboard
-      HStack {
-        
-      }
-      ScrollView(.vertical, showsIndicators: false) {
-        LazyVStack(spacing: 24) {
-          ForEach(
-            store.scope(state: \.webToonList, action: \.webToonList)
-          ) { store in
-            WebToonRow(store: store)
+    WithPerceptionTracking {
+      VStack {
+        dashboard
+        HStack {
+          
+        }
+        ScrollView(.vertical, showsIndicators: false) {
+          LazyVStack(spacing: 24) {
+            ForEach(
+              store.scope(state: \.webToonList, action: \.webToonList)
+            ) { store in
+              WebToonRow(store: store)
+            }
           }
         }
       }
+      .padding(.horizontal, 16)
+      .task { await store.send(.prepare).finish() }
     }
-    .padding(.horizontal, 16)
-    .task { await store.send(.prepare).finish() }
   }
   
   private var dashboard: some View {
