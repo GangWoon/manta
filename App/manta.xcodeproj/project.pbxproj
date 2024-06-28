@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AEBACCA62C2EB7E20023ECC6 /* NewAndNowFeature in Frameworks */ = {isa = PBXBuildFile; productRef = AEBACCA52C2EB7E20023ECC6 /* NewAndNowFeature */; };
 		AEFFE6B82C29A4E500EDEC8A /* mantaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEFFE6B72C29A4E500EDEC8A /* mantaApp.swift */; };
 		AEFFE6BC2C29A4E600EDEC8A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AEFFE6BB2C29A4E600EDEC8A /* Assets.xcassets */; };
 		AEFFE6BF2C29A4E600EDEC8A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AEFFE6BE2C29A4E600EDEC8A /* Preview Assets.xcassets */; };
@@ -25,18 +26,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AEBACCA62C2EB7E20023ECC6 /* NewAndNowFeature in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		AEBACCA42C2EB7E20023ECC6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		AEFFE6AB2C29A4E500EDEC8A = {
 			isa = PBXGroup;
 			children = (
 				AEF9EB472C29A5CC006C8848 /* manta */,
 				AEFFE6B62C29A4E500EDEC8A /* iOS */,
 				AEFFE6B52C29A4E500EDEC8A /* Products */,
+				AEBACCA42C2EB7E20023ECC6 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -82,6 +92,9 @@
 			dependencies = (
 			);
 			name = manta;
+			packageProductDependencies = (
+				AEBACCA52C2EB7E20023ECC6 /* NewAndNowFeature */,
+			);
 			productName = manta;
 			productReference = AEFFE6B42C29A4E500EDEC8A /* manta.app */;
 			productType = "com.apple.product-type.application";
@@ -203,6 +216,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -258,6 +272,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -342,6 +357,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AEBACCA52C2EB7E20023ECC6 /* NewAndNowFeature */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = NewAndNowFeature;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = AEFFE6AC2C29A4E500EDEC8A /* Project object */;
 }
