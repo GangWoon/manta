@@ -1,15 +1,16 @@
 import ComposableArchitecture
+import ViewHelper
 import ApiClient
 import SwiftUI
 
 public struct NewAndNowView: View {
-  let store: StoreOf<NewAndNowCore>
   // MARK: - ViewState
   @State private var showingHeader = true
   @State private var turningPoint = CGFloat.zero
   private let thresholdScrollDistance: CGFloat = 50
   private let coordinateSpace = "ScrollView"
   
+  @ComposableArchitecture.Bindable var store: StoreOf<NewAndNowCore>
   
   public init(store: StoreOf<NewAndNowCore>) {
     self.store = store
@@ -57,6 +58,16 @@ public struct NewAndNowView: View {
       Text("ABCD")
     }
   }
+  
+  private var scrollViewHeader: some View {
+    AnimatedUnderlineTabBar(
+      currentTab: $store.selectedCategory,
+      itemList: store.scrollCategoryList
+    ) { item in
+      Text(item.title)
+    }
+  }
+  
   private var scrollView: some View {
     GeometryReader { outer in
       let outerHeight = outer.size.height
@@ -93,6 +104,14 @@ public struct NewAndNowView: View {
     .padding(.top, 1)
   }
 }
+
+extension NewAndNowCore.State.ScrollCategory {
+  var title: String {
+    switch self {
+    case .comingSoon:
+      return "Coming soon"
+    case .newArrivals:
+      return "New arrivals"
     }
   }
 }
