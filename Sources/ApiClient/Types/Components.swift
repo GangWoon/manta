@@ -51,7 +51,6 @@ extension Components.Schemas.NewAndNow.WebToon: Codable {
     self.title = try container.decode(String.self, forKey: Components.Schemas.NewAndNow.WebToon.CodingKeys.title)
     let urlString = try container.decode(String.self, forKey: Components.Schemas.NewAndNow.WebToon.CodingKeys.thumbnail)
     self.thumbnail = URL(string: urlString)
-    print(thumbnail)
     self.thumbnailColor = try container.decode(String.self, forKey: Components.Schemas.NewAndNow.WebToon.CodingKeys.thumbnailColor)
     self.tags = try container.decode([String].self, forKey: Components.Schemas.NewAndNow.WebToon.CodingKeys.tags)
     self.summary = try container.decode(String.self, forKey: Components.Schemas.NewAndNow.WebToon.CodingKeys.summary)
