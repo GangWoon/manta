@@ -66,10 +66,18 @@ public struct NewAndNowView: View {
       itemList: store.scrollCategoryList
     ) { item in
       Text(item.title)
+        .foregroundStyle(
+          store.selectedReleaseStatus == item
+          ? Color.manta.white
+          : Color.manta.lightGray
+        )
         .onTapGesture {
           scrollValue.scrollID = store.state.scrollID(for: item)
           scrollValue.isScrolling = true
         }
+    } underline: {
+      Color.manta.white
+        .frame(height: 2)
     }
   }
   
