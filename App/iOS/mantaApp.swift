@@ -1,3 +1,4 @@
+import ComposableArchitecture
 import NewAndNowFeature
 import SwiftUI
 
@@ -5,7 +6,12 @@ import SwiftUI
 struct mantaApp: App {
   var body: some Scene {
     WindowGroup {
-      NewAndNowView()
+      NewAndNowView(
+        store: Store(
+          initialState: NewAndNowCore.State(),
+          reducer: NewAndNowCore.init
+        )
+      )
     }
   }
 }

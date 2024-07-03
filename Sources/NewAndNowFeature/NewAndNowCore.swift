@@ -1,4 +1,4 @@
-@preconcurrency import ComposableArchitecture
+import ComposableArchitecture
 import Foundation
 import ApiClient
 
@@ -6,31 +6,32 @@ import ApiClient
 public struct NewAndNowCore {
   @ObservableState
   public struct State: Equatable, Sendable {
-    public var selectedCategory: ScrollCategory
-    public enum ScrollCategory: Equatable, Sendable, CaseIterable {
-      case comingSoon
-      case newArrivals
-    }
-    
-    public var scrollCategoryList: [ScrollCategory]
+    public var selectedReleaseStatus: WebToonCore.State.ReleaseStatus
+    public var scrollCategoryList: [WebToonCore.State.ReleaseStatus]
     public var webToonList: IdentifiedArrayOf<WebToonCore.State>
     
     public init(
-      selectedCategory: ScrollCategory = .comingSoon,
-      scrollCategoryList: [ScrollCategory] = ScrollCategory.allCases,
+      selectedReleaseStatus: WebToonCore.State.ReleaseStatus = .comingSoon,
+      scrollCategoryList: [WebToonCore.State.ReleaseStatus] = WebToonCore.State.ReleaseStatus.allCases,
       webToonList: IdentifiedArrayOf<WebToonCore.State> = []
     ) {
-      self.selectedCategory = selectedCategory
+      self.selectedReleaseStatus = selectedReleaseStatus
       self.scrollCategoryList = scrollCategoryList
       self.webToonList = webToonList
+    }
+    
+    func scrollID(for releaseStatus: WebToonCore.State.ReleaseStatus) -> WebToonCore.State.ID? {
+      webToonList
+        .filter { $0.releaseStatus == releaseStatus }
+        .first?.id
     }
   }
   
   public enum Action: Equatable, Sendable, BindableAction {
-    case binding(BindingAction<State>)
     case prepare
     case fetchResponse(Components.Schemas.NewAndNow)
     case webToonList(IdentifiedActionOf<WebToonCore>)
+    case binding(BindingAction<State>)
   }
   
   @Dependency(\.apiClient) var apiClient
@@ -41,7 +42,7 @@ public struct NewAndNowCore {
   public var body: some ReducerOf<Self> {
     BindingReducer()
     
-    Reduce { state, action in
+    Reduce<State, Action> { state, action in
       switch action {
       case .prepare:
         return .run { send in
@@ -54,24 +55,28 @@ public struct NewAndNowCore {
             case .undocumented(statusCode: let code):
               print(code)
             }
-          } catch {
-            print("!!!", error)
-          }
+          } catch { }
         }
         
       case .fetchResponse(let data):
         let comingSoon = data.comingSoon
-          .map { $0.webToonState(uuid(), type: .comingSoon) }
-//        let newArrivals = data.newArrivals
-//          .map { $0.webToonState(uuid(), type: .newArrivals) }
-        state.webToonList.append(contentsOf: comingSoon)
-        print(comingSoon.count)
+          .map { $0.webToonState(uuid(), releaseStatus: .comingSoon) }
+        let newArrivals = data.newArrivals
+          .map { $0.webToonState(uuid(), releaseStatus: .newArrivals) }
+        state.webToonList.append(contentsOf: comingSoon + newArrivals)
         return .none
         
-      case .webToonList:
+      case .webToonList(.element(id: let id, action: let action)):
+        if 
+          case .onAppear = action,
+          let selectedReleaseStatus = state.webToonList[id: id]?.releaseStatus,
+          state.selectedReleaseStatus != selectedReleaseStatus
+        {
+          state.selectedReleaseStatus = selectedReleaseStatus
+        }
         return .none
         
-      case .binding:
+      case .webToonList, .binding:
         return .none
       }
     }
@@ -83,10 +88,10 @@ public struct NewAndNowCore {
 }
 
 private extension Components.Schemas.NewAndNow.WebToon {
-  func webToonState(_ id: UUID, type: WebToonCore.State.ReleaseStatus) -> WebToonCore.State {
+  func webToonState(_ id: UUID, releaseStatus: WebToonCore.State.ReleaseStatus) -> WebToonCore.State {
     .init(
       id: id,
-      type: type,
+      releaseStatus: releaseStatus,
       title: title,
       tags: tags,
       thumbnailURL: thumbnail,

@@ -10,6 +10,8 @@ public struct NewAndNowView: View {
   private let thresholdScrollDistance: CGFloat = 50
   private let coordinateSpace = "ScrollView"
   
+  @State private var scrollValue: ScrollValue = .init(isScrolling: false)
+  
   @ComposableArchitecture.Bindable var store: StoreOf<NewAndNowCore>
   
   public init(store: StoreOf<NewAndNowCore>) {
@@ -28,7 +30,6 @@ public struct NewAndNowView: View {
         
         scrollViewHeader
           .padding(.horizontal, 16)
-        
         
         scrollView
           .padding(.horizontal, 16)
@@ -61,10 +62,14 @@ public struct NewAndNowView: View {
   
   private var scrollViewHeader: some View {
     AnimatedUnderlineTabBar(
-      currentTab: $store.selectedCategory,
+      currentTab: $store.selectedReleaseStatus,
       itemList: store.scrollCategoryList
     ) { item in
       Text(item.title)
+        .onTapGesture {
+          scrollValue.scrollID = store.state.scrollID(for: item)
+          scrollValue.isScrolling = true
+        }
     }
   }
   
@@ -72,30 +77,35 @@ public struct NewAndNowView: View {
     GeometryReader { outer in
       let outerHeight = outer.size.height
       
-      ScrollView(showsIndicators: false) {
-        LazyVStack(spacing: 24) {
-          ForEach(
-            store.scope(state: \.webToonList, action: \.webToonList),
-            content: WebToonRow.init
-          )
-        }
-        .background {
-          GeometryReader { proxy in
-            let contentHeight = proxy.size.height
-            let minY = max(
-              min(0, proxy.frame(in: .named(coordinateSpace)).minY),
-              outerHeight - contentHeight
+      ScrollViewReader { proxy in
+        ScrollView(showsIndicators: false) {
+          LazyVStack(spacing: 24) {
+            let list = Array(
+              zip(
+                store.webToonList.ids,
+                store.scope(state: \.webToonList, action: \.webToonList)
+              )
             )
-            Color.clear
-              .onChange(of: minY) { newValue in
-                if (showingHeader && newValue > minY) || (!showingHeader && newValue < minY) {
-                  turningPoint = newValue
+            ForEach(list, id: \.0) { id, store in
+              WebToonRow(store: store)
+                .id(id)
+                .onAppear {
+                  guard !scrollValue.isScrolling else { return }
+                  store.send(.onAppear)
                 }
-                
-                if (showingHeader && turningPoint > newValue) || (!showingHeader && (newValue - turningPoint) > thresholdScrollDistance) {
-                  showingHeader = newValue > turningPoint
-                }
-              }
+            }
+          }
+          .background { scrollDirectionTracker(outerHeight) }
+        }
+        .simultaneousGesture(scrollStausTracker)
+        .onChange(of: scrollValue) { newValue in
+          guard let scrollID = newValue.scrollID else { return }
+          withAnimation(.easeIn(duration: 1)) { proxy.scrollTo(scrollID, anchor: .top) }
+          if newValue.isScrolling {
+            Task {
+              try await Task.sleep(for: .seconds(1))
+              scrollValue.isScrolling = false
+            }
           }
         }
       }
@@ -103,9 +113,53 @@ public struct NewAndNowView: View {
     }
     .padding(.top, 1)
   }
+  
+  private func scrollDirectionTracker(_ outerHeight: CGFloat) -> some View {
+    GeometryReader { proxy in
+      let contentHeight = proxy.size.height
+      let minY = max(
+        min(0, proxy.frame(in: .named(coordinateSpace)).minY),
+        outerHeight - contentHeight
+      )
+      Color.clear
+        .onChange(of: minY) { newValue in
+          if
+            (showingHeader && newValue > minY)
+            || (!showingHeader && newValue < minY)
+          {
+            turningPoint = newValue
+          }
+          
+          if
+            (showingHeader && turningPoint > newValue)
+            || (!showingHeader && (newValue - turningPoint) > thresholdScrollDistance)
+          {
+            showingHeader = newValue > turningPoint
+          }
+        }
+    }
+  }
+  
+  private var scrollStausTracker: some Gesture {
+    DragGesture()
+      .onChanged { _ in
+        scrollValue.isScrolling = true
+        scrollValue.scrollID = nil
+      }
+      .onEnded { _ in
+        scrollValue.isScrolling = false
+      }
+  }
 }
 
-extension NewAndNowCore.State.ScrollCategory {
+private extension NewAndNowView {
+  struct ScrollValue: Equatable {
+    var isScrolling: Bool
+    var scrollID: UUID?
+  }
+}
+
+extension WebToonCore.State.ReleaseStatus {
   var title: String {
     switch self {
     case .comingSoon:

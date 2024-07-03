@@ -5,10 +5,10 @@ import SwiftUI
 @Reducer
 public struct WebToonCore {
   @ObservableState
-  public struct State: Equatable, Identifiable {
+  public struct State: Equatable, Sendable, Identifiable {
     public var id: UUID
-    var type: ReleaseStatus
-    enum ReleaseStatus: Equatable {
+    public var releaseStatus: ReleaseStatus
+    public enum ReleaseStatus: Hashable, Sendable, CaseIterable {
       case comingSoon
       case newArrivals
     }
@@ -31,12 +31,14 @@ public struct WebToonCore {
   
   public enum Action: Sendable {
     case notifyButtonTapped
+    case onAppear
   }
   
-  public var body: some ReducerOf<Self> {
-    Reduce { state, action in
-      return .none
-    }
+  public func reduce(
+    into state: inout State,
+    action: Action
+  ) -> Effect<Action> {
+    .none
   }
 }
 
@@ -221,7 +223,7 @@ extension Color {
     store: Store(
       initialState: WebToonCore.State(
         id: .init(),
-        type: .comingSoon,
+        releaseStatus: .comingSoon,
         title: "Choose Your Heroes Carefully",
         tags: ["BL", "Fantasy", "Adventure"],
         thumbnailURL: URL(string: "https://github.com/GangWoon/manta/assets/48466830/8d4487b9-a8fc-4612-9444-b5c5dc1b19c7"),
