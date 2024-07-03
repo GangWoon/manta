@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import ViewHelper
 import ApiClient
 import SwiftUI
 
@@ -198,25 +199,6 @@ struct WebToonRow: View {
   }
 }
 
-// MARK: - 유틸로 분리시키기
-extension Color {
-  init(hex: String) {
-    var hexString = hex
-    if hexString.hasPrefix("#") {
-      hexString = String(hexString.dropFirst())
-    }
-    
-    let scanner = Scanner(string: hexString)
-    var rgbValue: UInt64 = 0
-    scanner.scanHexInt64(&rgbValue)
-    
-    let red = Double((rgbValue & 0xff0000) >> 16) / 255.0
-    let green = Double((rgbValue & 0x00ff00) >> 8) / 255.0
-    let blue = Double(rgbValue & 0x0000ff) / 255.0
-    
-    self.init(red: red, green: green, blue: blue)
-  }
-}
 
 #Preview {
   WebToonRow(
