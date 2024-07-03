@@ -66,7 +66,10 @@ struct TabBarItem<Content, Item>: View where Content: View, Item: Hashable {
       }
     }
     .animation(.easeInOut, value: currentTab)
-    .onTapGesture { currentTab = tab }
+    .simultaneousGesture(
+      TapGesture()
+        .onEnded { currentTab = tab }
+    )
   }
 }
 
