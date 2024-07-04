@@ -24,18 +24,27 @@ public struct NewAndNowView: View {
         dashboard
           .padding(.horizontal, 16)
         
-        if showingHeader {
-          notificationList
+        if showingHeader && !store.notificationItemList.isEmpty {
+          WebToonNotificationItemView(
+            itemList: store.notificationItemList
+          )
+          .frame(height: 48)
         }
         
         scrollViewHeader
           .padding(.horizontal, 16)
+          .background(alignment: .bottom) {
+            Color.gray
+              .frame(height: 1)
+          }
         
         scrollView
           .padding(.horizontal, 16)
       }
+      .background { Color.manta.deepGray.ignoresSafeArea() }
       .animation(.easeInOut, value: showingHeader)
       .task { await store.send(.prepare).finish() }
+      .bind($showingHeader, to: $store.forceShowingHeader)
     }
   }
   
@@ -49,15 +58,7 @@ public struct NewAndNowView: View {
       }
       .font(.system(size: 22).bold())
     }
-    .background(Color.white)
-  }
-  
-  private var notificationList: some View {
-    HStack {
-      Text("ABCD")
-      Text("ABCD")
-      Text("ABCD")
-    }
+    .foregroundStyle(.manta.white)
   }
   
   private var scrollViewHeader: some View {
@@ -87,7 +88,7 @@ public struct NewAndNowView: View {
       
       ScrollViewReader { proxy in
         ScrollView(showsIndicators: false) {
-          LazyVStack(spacing: 24) {
+          LazyVStack {
             let list = Array(
               zip(
                 store.webToonList.ids,
@@ -96,6 +97,7 @@ public struct NewAndNowView: View {
             )
             ForEach(list, id: \.0) { id, store in
               WebToonRow(store: store)
+                .padding(.top, 16)
                 .id(id)
                 .onAppear {
                   guard !scrollValue.isScrolling else { return }
