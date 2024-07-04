@@ -7,27 +7,34 @@ import SwiftUI
 public struct WebToonCore {
   @ObservableState
   public struct State: Equatable, Sendable, Identifiable {
-    public var id: UUID
-    public var releaseStatus: ReleaseStatus
-    public enum ReleaseStatus: Hashable, Sendable, CaseIterable {
-      case comingSoon
-      case newArrivals
-    }
-    
-    var title: String
-    var tags: [String]
-    var thumbnailURL: URL?
-    var thumbnailColor: String
-    var summary: String
-    var isSummaryExpaneded: Bool = false
-    var episodes: [Components.Schemas.NewAndNow.WebToon.Episode]
-    var isEpisodeExpaneded: Bool = false
+    // MARK: - ViewState
     var episodeThumbnail: URL? {
       episodes.first?.thumbnail
     }
     var arrowImage: String {
       "chevron.\(isEpisodeExpaneded ? "up": "down")"
     }
+    
+    public var id: UUID
+    public var releaseStatus: ReleaseStatus {
+      releaseDate != nil ? .comingSoon : .newArrivals
+    }
+    public enum ReleaseStatus: Hashable, Sendable, CaseIterable {
+      case comingSoon
+      case newArrivals
+    }
+    
+    public var releaseDate: Date?
+    public var title: String
+    public var tags: [String]
+    public var thumbnailURL: URL?
+    public var thumbnailColor: String
+    public var summary: String
+    public var episodes: [Components.Schemas.NewAndNow.WebToon.Episode]
+    
+    public var isSummaryExpaneded: Bool = false
+    public var isEpisodeExpaneded: Bool = false
+    public var isNotified: Bool = false
   }
   
   public enum Action: Sendable {
@@ -35,11 +42,17 @@ public struct WebToonCore {
     case onAppear
   }
   
-  public func reduce(
-    into state: inout State,
-    action: Action
-  ) -> Effect<Action> {
-    .none
+  public var body: some ReducerOf<Self> {
+    Reduce { state, action in
+      switch action {
+      case.notifyButtonTapped:
+        state.isNotified.toggle()
+        return .none
+        
+      case .onAppear:
+        return .none
+      }
+    }
   }
 }
 
@@ -132,10 +145,10 @@ struct WebToonRow: View {
   }
   
   private var notifyButton: some View {
-    Button(action: { store.send(.notifyButtonTapped) }) {
+    Button(action: { store.send(.notifyButtonTapped, animation: .easeInOut) }) {
       HStack {
-        Image(systemName: "bell")
-        Text("Notify me")
+        Image(systemName: store.isNotified ? "bell.fill" : "bell")
+        Text(store.isNotified ? "Notification set" : "Notify me")
           .font(.system(size: 16).bold())
       }
       .foregroundStyle(.white)
@@ -199,13 +212,11 @@ struct WebToonRow: View {
   }
 }
 
-
 #Preview {
   WebToonRow(
     store: Store(
       initialState: WebToonCore.State(
         id: .init(),
-        releaseStatus: .comingSoon,
         title: "Choose Your Heroes Carefully",
         tags: ["BL", "Fantasy", "Adventure"],
         thumbnailURL: URL(string: "https://github.com/GangWoon/manta/assets/48466830/8d4487b9-a8fc-4612-9444-b5c5dc1b19c7"),

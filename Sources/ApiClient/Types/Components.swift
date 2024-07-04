@@ -9,7 +9,7 @@ extension Components.Schemas {
     // TODO: - Shared Model로 빼기
     public struct WebToon: Sendable, Equatable, Identifiable {
       public var id: UUID
-      public var releaseDate: Date
+      public var releaseDate: Date?
       public var title: String
       public var thumbnail: URL?
       public var thumbnailColor: String
@@ -45,27 +45,27 @@ extension Components.Schemas {
 // MARK: - WebToon Codable
 extension Components.Schemas.NewAndNow.WebToon: Codable {
   public init(from decoder: any Decoder) throws {
-    let container: KeyedDecodingContainer<Components.Schemas.NewAndNow.WebToon.CodingKeys> = try decoder.container(keyedBy: Components.Schemas.NewAndNow.WebToon.CodingKeys.self)
+    let container = try decoder.container(keyedBy: Components.Schemas.NewAndNow.WebToon.CodingKeys.self)
     self.id = (try? container.decode(UUID.self, forKey: Components.Schemas.NewAndNow.WebToon.CodingKeys.id)) ?? UUID()
-    self.releaseDate = try container.decode(Date.self, forKey: Components.Schemas.NewAndNow.WebToon.CodingKeys.releaseDate)
-    self.title = try container.decode(String.self, forKey: Components.Schemas.NewAndNow.WebToon.CodingKeys.title)
-    let urlString = try container.decode(String.self, forKey: Components.Schemas.NewAndNow.WebToon.CodingKeys.thumbnail)
+    self.releaseDate = try container.decodeIfPresent(Date.self, forKey: .releaseDate)
+    self.title = try container.decode(String.self, forKey: .title)
+    let urlString = try container.decode(String.self, forKey: .thumbnail)
     self.thumbnail = URL(string: urlString)
-    self.thumbnailColor = try container.decode(String.self, forKey: Components.Schemas.NewAndNow.WebToon.CodingKeys.thumbnailColor)
-    self.tags = try container.decode([String].self, forKey: Components.Schemas.NewAndNow.WebToon.CodingKeys.tags)
-    self.summary = try container.decode(String.self, forKey: Components.Schemas.NewAndNow.WebToon.CodingKeys.summary)
-    self.ageRating = try container.decode(String.self, forKey: Components.Schemas.NewAndNow.WebToon.CodingKeys.ageRating)
-    self.creators = try container.decode(Components.Schemas.NewAndNow.WebToon.Creators.self, forKey: Components.Schemas.NewAndNow.WebToon.CodingKeys.creators)
-    self.episodes = (try? container.decode([Episode].self, forKey: Components.Schemas.NewAndNow.WebToon.CodingKeys.episodes)) ?? []
+    self.thumbnailColor = try container.decode(String.self, forKey: .thumbnailColor)
+    self.tags = try container.decode([String].self, forKey: .tags)
+    self.summary = try container.decode(String.self, forKey: .summary)
+    self.ageRating = try container.decode(String.self, forKey: .ageRating)
+    self.creators = try container.decode(Components.Schemas.NewAndNow.WebToon.Creators.self, forKey: .creators)
+    self.episodes = (try? container.decode([Episode].self, forKey: .episodes)) ?? []
   }
 }
 
 // MARK: - Episode Codable
 extension Components.Schemas.NewAndNow.WebToon.Episode: Codable {
   public init(from decoder: any Decoder) throws {
-    let container: KeyedDecodingContainer<Components.Schemas.NewAndNow.WebToon.Episode.CodingKeys> = try decoder.container(keyedBy: Components.Schemas.NewAndNow.WebToon.Episode.CodingKeys.self)
-    self.title = try container.decode(String.self, forKey: Components.Schemas.NewAndNow.WebToon.Episode.CodingKeys.title)
-    let urlString = try container.decode(String.self, forKey: Components.Schemas.NewAndNow.WebToon.Episode.CodingKeys.thumbnail)
+    let container = try decoder.container(keyedBy: Components.Schemas.NewAndNow.WebToon.Episode.CodingKeys.self)
+    self.title = try container.decode(String.self, forKey: .title)
+    let urlString = try container.decode(String.self, forKey: .thumbnail)
     self.thumbnail = URL(string: urlString)
   }
 }
