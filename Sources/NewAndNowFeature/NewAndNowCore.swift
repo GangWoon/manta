@@ -101,6 +101,12 @@ public struct NewAndNowCore {
             if let index = state.notificationItem.itemList.firstIndex(where: { $0.id == id }) {
               state.notificationItem.itemList.remove(at: index)
             }
+          }
+          return .run { send in
+            /// ScrollView가 정상적으로 동작하지 않아서 강제로 딜레이를 주고 scrollID가 설정되도록 구현했습니다.
+            try await Task.sleep(for: .seconds((0.1)))
+            await send(.binding(.set(\.notificationItem.scrollID, webToonState.isNotified ? id : nil)))
+          }
         }
         
       case .webToonList, .notificationItem, .binding:
