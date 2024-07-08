@@ -87,16 +87,16 @@ public extension View {
   }
 }
 
-@available(iOS 18.0, *)
-#Preview {
-  @Previewable @State var isSelected: Bool = false
-  
-  Button(action: { isSelected.toggle() }) {
-    Image(
-      systemName: isSelected
-      ? "bell.fill"
-      : "bell"
-    )
-  }
-  .wiggleAnimation(isSelected: isSelected)
-}
+//@available(iOS 18.0, *)
+//#Preview {
+//  @Previewable @State var isSelected: Bool = false
+//  
+//  Button(action: { isSelected.toggle() }) {
+//    Image(
+//      systemName: isSelected
+//      ? "bell.fill"
+//      : "bell"
+//    )
+//  }
+//  .wiggleAnimation(isSelected: isSelected)
+//}

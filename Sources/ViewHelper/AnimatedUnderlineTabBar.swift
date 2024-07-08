@@ -75,14 +75,14 @@ struct TabBarItem<Content, Underline,Item>: View where Content: View, Underline:
   }
 }
 
-@available(iOS 18.0, *)
-#Preview {
-  @Previewable @State var selected: String = "ABCD1234"
-  AnimatedUnderlineTabBar(
-    currentTab: $selected,
-    itemList: ["ABCD", "efg"]) { item in
-      Text(item)
-    } underline: {
-      Color.black.frame(height: 2)
-    }
-}
+//@available(iOS 18.0, *)
+//#Preview {
+//  @Previewable @State var selected: String = "ABCD1234"
+//  AnimatedUnderlineTabBar(
+//    currentTab: $selected,
+//    itemList: ["ABCD", "efg"]) { item in
+//      Text(item)
+//    } underline: {
+//      Color.black.frame(height: 2)
+//    }
+//}

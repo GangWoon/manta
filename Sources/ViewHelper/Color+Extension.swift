@@ -23,6 +23,7 @@ public struct Manta {
   public let lightGray = Color(hex: "#6b6e75")
   public let deepGray = Color(hex: "#1b1d20")
   public let white = Color(hex: "#ffffff")
+  public let black = Color(hex: "#000000")
 }
 
 extension Color {
