@@ -12,7 +12,7 @@ public struct NewAndNowCore {
     /// 복잡한 스크롤 뷰 로직은 뷰에서만 처리하려고 설계했지만, 스크롤 뷰 해더를 강제적으로 노출시키기 위해서 만든 값입니다.
     /// 해더를 노출시키기는 로직을 리듀서 내부에서 관리하시며 안됩니다.
     public var forceShowingHeader: Bool
-    public var notificationItem: WebToonNotificationItemListCore.State
+    public var notificationItemList: WebToonNotificationItemListCore.State
     public var webToonList: IdentifiedArrayOf<WebToonCore.State>
     
     public init(
@@ -25,7 +25,7 @@ public struct NewAndNowCore {
       self.scrollCategoryList = scrollCategoryList
       self.forceShowingHeader = forceShowingHeader
       self.webToonList = webToonList
-      self.notificationItem = .init(itemList: [])
+      self.notificationItemList = .init(itemList: [])
     }
     
     func scrollID(for releaseStatus: WebToonCore.State.ReleaseStatus) -> WebToonCore.State.ID? {
@@ -40,7 +40,7 @@ public struct NewAndNowCore {
     case prepare
     case fetchResponse(Components.Schemas.NewAndNow)
     case webToonList(IdentifiedActionOf<WebToonCore>)
-    case notificationItem(WebToonNotificationItemListCore.Action)
+    case notificationItemList(WebToonNotificationItemListCore.Action)
     case binding(BindingAction<State>)
   }
   
@@ -52,7 +52,7 @@ public struct NewAndNowCore {
   public var body: some ReducerOf<Self> {
     BindingReducer()
     
-    Scope(state: \.notificationItem, action: \.notificationItem) {
+    Scope(state: \.notificationItemList, action: \.notificationItemList) {
       WebToonNotificationItemListCore()
     }
     
@@ -95,21 +95,21 @@ public struct NewAndNowCore {
           state.forceShowingHeader = true
           if webToonState.isNotified {
             if let item = webToonState.notificationItem {
-              state.notificationItem.itemList.insertSorted(item)
+              state.notificationItemList.itemList.insertSorted(item)
             }
           } else {
-            if let index = state.notificationItem.itemList.firstIndex(where: { $0.id == id }) {
-              state.notificationItem.itemList.remove(at: index)
+            if let index = state.notificationItemList.itemList.firstIndex(where: { $0.id == id }) {
+              state.notificationItemList.itemList.remove(at: index)
             }
           }
           return .run { send in
             /// ScrollView가 정상적으로 동작하지 않아서 강제로 딜레이를 주고 scrollID가 설정되도록 구현했습니다.
             try await Task.sleep(for: .seconds((0.1)))
-            await send(.binding(.set(\.notificationItem.scrollID, webToonState.isNotified ? id : nil)))
+            await send(.binding(.set(\.notificationItemList.scrollID, webToonState.isNotified ? id : nil)))
           }
         }
         
-      case .webToonList, .notificationItem, .binding:
+      case .webToonList, .notificationItemList, .binding:
         return .none
       }
     }

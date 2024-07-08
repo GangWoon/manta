@@ -24,9 +24,10 @@ public struct NewAndNowView: View {
         dashboard
           .padding(.horizontal, 16)
         
-        if showingHeader && !store.notificationItem.isEmpty {
+        if showingHeader && !store.notificationItemList.isEmpty {
           WebToonNotificationItemListView(
-            store: store.scope(state: \.notificationItem, action: \.notificationItem)
+            store: store
+              .scope(state: \.notificationItemList, action: \.notificationItemList)
           )
           .frame(height: 48)
         }
