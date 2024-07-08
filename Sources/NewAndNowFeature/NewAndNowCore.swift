@@ -91,7 +91,7 @@ public struct NewAndNowCore {
           }
           return .none
           
-        case .notifyButtonTapped:
+        case .binding(\.isNotified):
           state.forceShowingHeader = true
           if webToonState.isNotified {
             if let item = webToonState.notificationItem {
@@ -107,6 +107,9 @@ public struct NewAndNowCore {
             try await Task.sleep(for: .seconds((0.1)))
             await send(.binding(.set(\.notificationItemList.scrollID, webToonState.isNotified ? id : nil)))
           }
+          
+        default:
+          return .none
         }
         
       case .webToonList, .notificationItemList, .binding:
@@ -142,7 +145,7 @@ private extension Components.Schemas.NewAndNow.WebToon {
       thumbnailURL: thumbnail,
       thumbnailColor: thumbnailColor,
       summary: summary,
-      episodes: []
+      episodes: episodes
     )
   }
 }
