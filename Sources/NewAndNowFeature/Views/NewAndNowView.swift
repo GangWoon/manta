@@ -12,7 +12,7 @@ public struct NewAndNowView: View {
   
   @State private var scrollValue: ScrollValue = .init(isScrolling: false)
   
-  @ComposableArchitecture.Bindable var store: StoreOf<NewAndNowCore>
+  @Perception.Bindable var store: StoreOf<NewAndNowCore>
   
   public init(store: StoreOf<NewAndNowCore>) {
     self.store = store
@@ -24,9 +24,9 @@ public struct NewAndNowView: View {
         dashboard
           .padding(.horizontal, 16)
         
-        if showingHeader && !store.notificationItemList.isEmpty {
-          WebToonNotificationItemView(
-            itemList: store.notificationItemList
+        if showingHeader && !store.notificationItem.isEmpty {
+          WebToonNotificationItemListView(
+            store: store.scope(state: \.notificationItem, action: \.notificationItem)
           )
           .frame(height: 48)
         }

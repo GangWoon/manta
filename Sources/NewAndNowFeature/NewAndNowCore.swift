@@ -12,18 +12,7 @@ public struct NewAndNowCore {
     /// 복잡한 스크롤 뷰 로직은 뷰에서만 처리하려고 설계했지만, 스크롤 뷰 해더를 강제적으로 노출시키기 위해서 만든 값입니다.
     /// 해더를 노출시키기는 로직을 리듀서 내부에서 관리하시며 안됩니다.
     public var forceShowingHeader: Bool
-    
-    public var notificationItemList: [NotificationItem] {
-      webToonList
-        .filter(\.isNotified)
-        .compactMap(\.notificationItem)
-    }
-    public struct NotificationItem: Equatable, Sendable, Identifiable {
-      public var id: WebToonCore.State.ID
-      public var thumbnail: URL?
-      public var releaseDate: Date
-    }
-    
+    public var notificationItem: WebToonNotificationItemListCore.State
     public var webToonList: IdentifiedArrayOf<WebToonCore.State>
     
     public init(
@@ -36,6 +25,7 @@ public struct NewAndNowCore {
       self.scrollCategoryList = scrollCategoryList
       self.forceShowingHeader = forceShowingHeader
       self.webToonList = webToonList
+      self.notificationItem = .init(itemList: [])
     }
     
     func scrollID(for releaseStatus: WebToonCore.State.ReleaseStatus) -> WebToonCore.State.ID? {
@@ -50,16 +40,21 @@ public struct NewAndNowCore {
     case prepare
     case fetchResponse(Components.Schemas.NewAndNow)
     case webToonList(IdentifiedActionOf<WebToonCore>)
+    case notificationItem(WebToonNotificationItemListCore.Action)
     case binding(BindingAction<State>)
   }
   
-  @Dependency(\.apiClient) var apiClient
-  @Dependency(\.uuid) var uuid
+  @Dependency(\.apiClient) private var apiClient
+  @Dependency(\.uuid) private var uuid
   
   public init() { }
   
   public var body: some ReducerOf<Self> {
     BindingReducer()
+    
+    Scope(state: \.notificationItem, action: \.notificationItem) {
+      WebToonNotificationItemListCore()
+    }
     
     Reduce<State, Action> { state, action in
       switch action {
@@ -74,9 +69,7 @@ public struct NewAndNowCore {
             case .undocumented(statusCode: let code):
               print(code)
             }
-          } catch { 
-            print(error)
-          }
+          } catch { }
         }
         
       case .fetchResponse(let data):
@@ -94,14 +87,23 @@ public struct NewAndNowCore {
         switch action {
         case .onAppear:
           if state.selectedReleaseStatus != webToonState.releaseStatus {
-          state.selectedReleaseStatus = webToonState.releaseStatus
-        }
+            state.selectedReleaseStatus = webToonState.releaseStatus
+          }
+          return .none
+          
         case .notifyButtonTapped:
           state.forceShowingHeader = true
+          if webToonState.isNotified {
+            if let item = webToonState.notificationItem {
+              state.notificationItem.itemList.insertSorted(item)
+            }
+          } else {
+            if let index = state.notificationItem.itemList.firstIndex(where: { $0.id == id }) {
+              state.notificationItem.itemList.remove(at: index)
+            }
         }
-        return .none
         
-      case .webToonList, .binding:
+      case .webToonList, .notificationItem, .binding:
         return .none
       }
     }
@@ -112,7 +114,7 @@ public struct NewAndNowCore {
 }
 
 extension WebToonCore.State {
-  var notificationItem: NewAndNowCore.State.NotificationItem? {
+  var notificationItem: WebToonNotificationItemListCore.State.NotificationItem? {
     if let releaseDate {
       return .init(
         id: id,
@@ -136,5 +138,15 @@ private extension Components.Schemas.NewAndNow.WebToon {
       summary: summary,
       episodes: []
     )
+  }
+}
+
+extension Array where Element: Comparable {
+  mutating func insertSorted(_ element: Element) {
+    if let index = self.firstIndex(where: { $0 > element }) {
+      self.insert(element, at: index)
+    } else {
+      self.append(element)
+    }
   }
 }
