@@ -112,7 +112,9 @@ public struct NewAndNowCore {
           return .none
         }
         
-      case .webToonList, .notificationItemList, .binding:
+      case .webToonList,
+          .notificationItemList,
+          .binding:
         return .none
       }
     }
@@ -145,7 +147,10 @@ private extension Components.Schemas.NewAndNow.WebToon {
       thumbnailURL: thumbnail,
       thumbnailColor: thumbnailColor,
       summary: summary,
-      episodes: episodes
+      episodes: .init(
+        colorCode: thumbnailColor,
+        episodes: episodes
+      )
     )
   }
 }

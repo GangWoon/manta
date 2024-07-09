@@ -27,19 +27,19 @@ public struct EpisodesCore {
     var episodes: [Components.Schemas.NewAndNow.WebToon.Episode]
   }
   
-  public enum Action: Equatable, Sendable {
-    case arrowToggleButtonTapped
+  public enum Action: Equatable, Sendable, BindableAction {
     case episodeTapped(UUID)
+    case binding(BindingAction<State>)
   }
   
   public var body: some ReducerOf<Self> {
+    BindingReducer()
+    
     Reduce { state, action in
       switch action {
-      case .arrowToggleButtonTapped:
-        state.isExpanded.toggle()
+      case .episodeTapped:
         return .none
-        
-      case .episodeTapped(let id):
+      case .binding:
         return .none
       }
     }
@@ -94,8 +94,10 @@ struct EpisodesView: View {
       Image(systemName: store.arrowImageName)
         .font(.system(size: 11).bold())
     }
-    .foregroundStyle(.white)
-    .onTapGesture { store.send(.arrowToggleButtonTapped) }
+    .foregroundStyle(.manta.white)
+    .onTapGesture {
+      store.send(.binding(.set(\.isExpanded, !store.isExpanded)))
+    }
   }
   
   private var expanded: some View {

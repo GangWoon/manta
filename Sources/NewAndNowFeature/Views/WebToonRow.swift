@@ -7,14 +7,6 @@ import SwiftUI
 public struct WebToonCore {
   @ObservableState
   public struct State: Equatable, Sendable, Identifiable {
-    // MARK: - ViewState
-    var episodeThumbnail: URL? {
-      episodes.first?.thumbnail
-    }
-    var arrowImage: String {
-      "chevron.\(isEpisodeExpaneded ? "up": "down")"
-    }
-    
     public var id: UUID
     public var releaseStatus: ReleaseStatus {
       releaseDate != nil ? .comingSoon : .newArrivals
@@ -30,24 +22,31 @@ public struct WebToonCore {
     public var thumbnailURL: URL?
     public var thumbnailColor: String
     public var summary: String
-    public var episodes: [Components.Schemas.NewAndNow.WebToon.Episode]
     
     public var isSummaryExpaneded: Bool = false
-    public var isEpisodeExpaneded: Bool = false
+    public var episodes: EpisodesCore.State
     public var isNotified: Bool = false
   }
   
   public enum Action: Equatable, Sendable, BindableAction {
     case onAppear
+    case episodes(EpisodesCore.Action)
     case binding(BindingAction<State>)
   }
   
   public var body: some ReducerOf<Self> {
     BindingReducer()
     
+    Scope(state: \.episodes, action: \.episodes) {
+      EpisodesCore()
+    }
+    
     Reduce { state, action in
       switch action {
       case .onAppear:
+        return .none
+        
+      case .episodes:
         return .none
         
       case .binding:
@@ -84,14 +83,10 @@ struct WebToonRow: View {
         .cornerRadius(10)
         
         if !store.episodes.isEmpty {
-          VStack {
-            collapsed
-          }
-          .padding(8)
-          .background {
-            RoundedRectangle(cornerRadius: 9)
-              .fill(Color(hex: store.thumbnailColor))
-          }
+          EpisodesView(
+            store: store
+              .scope(state: \.episodes, action: \.episodes)
+          )
         }
       }
     }
@@ -202,53 +197,27 @@ struct WebToonRow: View {
       Color.clear
     }
   }
-  
-  private var collapsed: some View {
-    HStack {
-      LazyImage(url: store.episodeThumbnail) { image in
-        image
-          .resizable()
-          .cornerRadius(6)
-          .opacity(store.isEpisodeExpaneded ? 0 : 1)
-          .frame(
-            width: store.isEpisodeExpaneded ? 0 : 24,
-            height: store.isEpisodeExpaneded ? 0 : 24
-          )
-      } placeholder: {
-        Color.clear
-      }
-      
-      Text(store.title)
-        .font(.system(size: 14).bold())
-      
-      Spacer()
-      
-      Image(systemName: store.arrowImage)
-        .font(.system(size: 11).bold())
-    }
-    .foregroundStyle(.white)
-    .onTapGesture {
-      store.send(.binding(.set(\.isEpisodeExpaneded, !store.isEpisodeExpaneded)))
-    }
-  }
 }
 
-//#Preview {
-//  WebToonRow(
-//    store: Store(
-//      initialState: WebToonCore.State(
-//        id: .init(),
-//        title: "Choose Your Heroes Carefully",
-//        tags: ["BL", "Fantasy", "Adventure"],
-//        thumbnailURL: URL(string: "https://github.com/GangWoon/manta/assets/48466830/8d4487b9-a8fc-4612-9444-b5c5dc1b19c7"),
-//        thumbnailColor: "#5B7AA1",
-//        summary: "Stuck in a game with a lousy hero? Me too!\nMinjoon, a normal office worker, wakes up inside the game he was reviewing for his friend. It's not his fault the trailer was so boring it put him to sleep! Bewildered, Minjoon is tasked with summoning a hero to guide. The hero certainly looks strong, but he seems to be less useful than expected.",
-//        episodes: [
-//          .init(title: "S1 Episode 1", thumbnail: URL(string: "https://github.com/GangWoon/manta/assets/48466830/5e5081d7-d42d-4cd4-ae16-59d24f1d7456"))
-//        ]
-//      ),
-//      reducer: WebToonCore.init
-//    )
-//  )
-//  .frame(height: 500)
-//}
+#Preview {
+  WebToonRow(
+    store: Store(
+      initialState: WebToonCore.State(
+        id: .init(),
+        title: "Choose Your Heroes Carefully",
+        tags: ["BL", "Fantasy", "Adventure"],
+        thumbnailURL: URL(string: "https://github.com/GangWoon/manta/assets/48466830/8d4487b9-a8fc-4612-9444-b5c5dc1b19c7"),
+        thumbnailColor: "#5B7AA1",
+        summary: "Stuck in a game with a lousy hero? Me too!\nMinjoon, a normal office worker, wakes up inside the game he was reviewing for his friend. It's not his fault the trailer was so boring it put him to sleep! Bewildered, Minjoon is tasked with summoning a hero to guide. The hero certainly looks strong, but he seems to be less useful than expected.",
+        episodes: .init(
+          colorCode: "#5B7AA1",
+          episodes: [
+            .init(title: "S1 Episode 1", thumbnail: URL(string: "https://github.com/GangWoon/manta/assets/48466830/5e5081d7-d42d-4cd4-ae16-59d24f1d7456"))
+          ]
+        )
+      ),
+      reducer: WebToonCore.init
+    )
+  )
+  .frame(height: 500)
+}
