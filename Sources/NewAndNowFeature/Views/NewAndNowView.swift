@@ -90,16 +90,12 @@ public struct NewAndNowView: View {
       ScrollViewReader { proxy in
         ScrollView(showsIndicators: false) {
           LazyVStack {
-            let list = Array(
-              zip(
-                store.webToonList.ids,
-                store.scope(state: \.webToonList, action: \.webToonList)
-              )
-            )
-            ForEach(list, id: \.0) { id, store in
+            ForEach(
+              store.scope(state: \.webToonList, action: \.webToonList)
+            ) { store in
               WebToonRow(store: store)
                 .padding(.top, 16)
-                .id(id)
+                .id(store.id)
                 .onAppear {
                   guard !scrollValue.isScrolling else { return }
                   store.send(.onAppear)
@@ -134,20 +130,26 @@ public struct NewAndNowView: View {
       )
       Color.clear
         .onChange(of: minY) { newValue in
-          if
-            (showingHeader && newValue > minY)
-            || (!showingHeader && newValue < minY)
-          {
-            turningPoint = newValue
-          }
-          
-          if
-            (showingHeader && turningPoint > newValue)
-            || (!showingHeader && (newValue - turningPoint) > thresholdScrollDistance)
-          {
-            showingHeader = newValue > turningPoint
-          }
+          updateShowingHeader(oldValue: minY, newValue: newValue)
         }
+    }
+  }
+  
+  private func updateShowingHeader(oldValue: CGFloat, newValue: CGFloat) {
+    if
+      (showingHeader && newValue > oldValue)
+      || (!showingHeader && newValue < oldValue)
+    {
+      turningPoint = newValue
+    }
+    
+    /// 스크롤 뷰 LazyVStack 내부 컨텐츠가 동적 높이를 갖기 때문에 저항값을 추가했습니다.
+    let register = 50.0
+    if
+      (showingHeader && turningPoint > newValue + register)
+      || (!showingHeader && (newValue - turningPoint) > thresholdScrollDistance)
+    {
+      showingHeader = newValue > turningPoint
     }
   }
   
@@ -171,7 +173,7 @@ private extension NewAndNowView {
 }
 
 extension WebToonCore.State.ReleaseStatus {
-  var title: String {
+  fileprivate var title: String {
     switch self {
     case .comingSoon:
       return "Coming soon"
