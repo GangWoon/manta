@@ -34,6 +34,57 @@ extension WebToonNotificationItemListCore.State.NotificationItem: Comparable {
 }
 
 struct WebToonNotificationItemListView: View {
+  let store: StoreOf<WebToonNotificationItemListCore>
+  private var viewStore: ViewStoreOf<WebToonNotificationItemListCore>
+  
+  init(store: StoreOf<WebToonNotificationItemListCore>) {
+    self.store = store
+    self.viewStore = ViewStore(store, observe: { $0 })
+  }
+  
+  var body: some View {
+    // MARK: - Reducer macro를 사용할 경우 ForEach(viewStore.itemList)에서 경고 발생
+    ScrollView(.horizontal) {
+      ScrollViewReader { proxy in
+        HStack {
+          ForEach(viewStore.itemList) { notificationItem in
+            HStack {
+              LazyImage(url: notificationItem.thumbnail) { image in
+                image
+                  .resizable()
+                  .clipShape(Circle())
+                  .frame(width: 32, height: 32)
+                
+              } placeholder: {
+                Color.clear
+                  .frame(width: 32, height: 32)
+                
+              }
+              .frame(width: 32, height: 32)
+              
+              Text(daysUntil(notificationItem.releaseDate))
+                .padding(.trailing)
+                .foregroundStyle(.manta.white)
+            }
+            .id(notificationItem.id)
+            .padding(4)
+            .background {
+              Capsule()
+                .fill(.manta.black)
+            }
+          }
+        }
+        .frame(height: 40)
+        .onChange(of: viewStore.scrollID) {
+          guard let id = $0 else { return }
+          withAnimation { proxy.scrollTo(id) }
+        }
+      }
+    }
+    .scrollIndicators(.hidden)
+    
+  }
+  
   private let comparedDate: Date = {
     var calendar = Calendar.current
     calendar.timeZone = TimeZone(identifier: "Asia/Seoul")!
@@ -41,59 +92,10 @@ struct WebToonNotificationItemListView: View {
     return calendar.date(from: dateComponents)!
   }()
   
-  let store: StoreOf<WebToonNotificationItemListCore>
-  
-  init(store: StoreOf<WebToonNotificationItemListCore>) {
-    self.store = store
-  }
-  
-  var body: some View {
-    // MARK: - Reducer macro를 사용할 경우 ForEach(viewStore.itemList)에서 경고 발생
-    WithViewStore(store, observe: { $0 }) { viewStore in
-      ScrollView(.horizontal) {
-        ScrollViewReader { proxy in
-          HStack {
-            ForEach(viewStore.itemList) { notificationItem in
-              HStack {
-                LazyImage(url: notificationItem.thumbnail) { image in
-                  image
-                    .resizable()
-                    .clipShape(Circle())
-                    .frame(width: 32, height: 32)
-                  
-                } placeholder: {
-                  Color.clear
-                    .frame(width: 32, height: 32)
-                  
-                }
-                .frame(width: 32, height: 32)
-                
-                Text(daysUntil(notificationItem.releaseDate))
-                  .padding(.trailing)
-                  .foregroundStyle(.manta.white)
-              }
-              .id(notificationItem.id)
-              .padding(4)
-              .background {
-                Capsule()
-                  .fill(.manta.black)
-              }
-            }
-          }
-          .frame(height: 40)
-          .onChange(of: viewStore.scrollID) {
-            guard let id = $0 else { return }
-            withAnimation { proxy.scrollTo(id) }
-          }
-        }
-      }
-      .scrollIndicators(.hidden)
-    }
-  }
-  
   private func daysUntil(_ date: Date) -> String {
     let calendar = Calendar.current
-    let components = calendar.dateComponents([.day], from: comparedDate)
+    let components = calendar
+      .dateComponents([.day], from: comparedDate, to: date)
     guard let diff = components.day else { return "" }
     return diff <= 0 ? "Read now" : "D - \(diff)"
   }
