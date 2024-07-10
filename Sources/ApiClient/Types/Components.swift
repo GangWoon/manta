@@ -36,6 +36,7 @@ extension Components.Schemas {
           self.thumbnail = thumbnail
         }
       }
+      public var isNewSeason: Bool?
     }
     public var comingSoon: [WebToon]
     public var newArrivals: [WebToon]

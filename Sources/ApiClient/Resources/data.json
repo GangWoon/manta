@@ -138,7 +138,7 @@
       ]
     },
     {
-      "release_date": "2024-07-06T00:00:00Z",
+      "release_date": "2024-07-02T00:00:00Z",
       "title": "Escape the Original Male Lead!",
       "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/18d78b07-7dad-47c0-9e86-595baeb71cd5",
       "thumbnail_color": "#00BFFF",
@@ -153,7 +153,7 @@
         }
     },
     {
-      "release_date": "2024-07-06T00:00:00Z",
+      "release_date": "2024-07-10T00:00:00Z",
       "title": "Raising My Husband",
       "season": "2",
       "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/e52e3c3b-ee38-4cd9-9301-5d8177121cbe",
@@ -206,7 +206,7 @@
       ]
     },
     {
-      "release_date": "2024-07-06T00:00:00Z",
+      "release_date": "2024-07-28T00:00:00Z",
       "title": "The Possessive Tyrant and His Sleepy Cat",
       "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/cc4cadd7-ab68-43ea-9186-84e0710f3f3b",
       "thumbnail_color": "#708090",
@@ -222,17 +222,114 @@
   ],
   "new_arrivals": [
     {
-      "title": "The Possessive Tyrant and His Sleepy Cat",
-      "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/cc4cadd7-ab68-43ea-9186-84e0710f3f3b",
-      "thumbnail_color": "#D3D3D3",
-      "tags": ["BL", "Fantasy", "Adventure", "Game" ,"Game system", "Confident", "Growth", "Memory loss", "Master-servant", "Isekai", "Dangerous", "Exciting", "Exclusive"],
-      "summary": "Of all the characters, I became... a cat?!\nI've found myself trapped in a mature-rated novel as a cursed cat, an animal deemed harmful to the empire all because of a single prophecy. Thus, every cat in existence is killed at first sight! What's worse, the male lead, fated to become a mad tyrant, has found me! What will he do to me?!",
+      "title": "Reborn as the Enemy Prince",
+      "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/e5545136-49cd-49f5-8034-7d30cab35fa7",
+      "thumbnail_color": "#28292c",
+      "tags": ["Fantasy", "Betrayal", "Death", "Free Pass", "Reincarnation", "Revenge", "Secret identity", "Time travel", "Cold-blooded", "Confident", "Growth", "Intellectual", "Strong-willed", "Kingdom", "Adrenaline rush", "Suspenseful", "New", "Exclusive"],
+      "summary": "Imagine being kin to your sworn enemy.\nKilled in battle while defending his country, Bern wakes up in the body of the enemy prince, Kalian, and vows to avenge his people. But between taming an abusive half-brother and surviving his mother's deadly web of intrigue, sweet revenge seems to slip further beyond his grasp at every turn.",
       "age_rating": "17+",
       "creators": {
-          "illustration": "Yunna",
-          "writer": "iitaesan, SANDO",
-          "original_story": "PpomPom"
+          "production": "Manta Comics",
+          "localization": "Manta Comics",
+          "original_story": "Ja Seo Hyeon"
+        },
+      "isNewSeason": "false",
+      "episodes": [
+      ]
+    },
+    {
+      "title": "By My Side",
+      "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/d1643b8b-54cb-42c2-9f71-77289a8cbc92",
+      "thumbnail_color": "#3791ad",
+      "tags": ["Romance", "Drama", "Pet", "Reunion", "Nice guy", "Sweet", "Childhood friends", "Modern setting", "Comforting", "Dog", "Animal", "Heartfelt", "Heartwarming", "Feel-good", "Relaxing", "Touching", "Completed"],
+      "summary": "Brought together by fate.\nHyungbae is a bit of a workaholic. Underappreciated and overworked, he feels burnt out at his current job. Enter Deokbae, a carefree dog that has a mind of his own! Follow Hyungbae and his canine companion as they navigate the ups and downs of life, bringing a whole new meaning to the word family.",
+      "age_rating": "ALL",
+      "creators": {
+          "illustration": "Junghyun",
+          "writer": "Junghyun",
+          "localization": "Manta Comics"
+        },
+      "isNewSeason": "true",
+      "episodes": [
+        {
+          "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/a107b3be-b6e6-406d-91e4-4dba3e21a2e1",
+          "title": "S1 Episode 1"
+        },
+        {
+          "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/03a67297-0b2e-49cd-884d-6e52bc8bf9e7",
+          "title": "S1 Episode 2"
+        },
+        {
+          "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/74d8f94a-6995-4b0a-a3ba-a0cb6f0800ff",
+          "title": "S1 Episode 3"
+        },
+        {
+          "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/e23e25eb-e337-4f90-9006-5a7af0c9fd1e",
+          "title": "S1 Episode 4"
+        },
+        {
+          "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/5f54a64d-8d08-43c8-8815-871ba6c04ee4",
+          "title": "S1 Episode 5"
         }
-    }
+      ]
+    },
+    {
+      "title": "Dear Hong Rang",
+      "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/cbc07bd9-d095-4cdd-aa03-1cd93a965dd8",
+      "thumbnail_color": "#4d4838",
+      "tags": ["Romance", "Period piece", "Destiny", "Free Pass", "Overcoming the odds", "Reunion", "Secret identity", "Girl crush", "Has it rough", "Hot guy", "Puppy-like", "Strong-willed", "Childhood friends", "Family", "Alternative history", "Angst", "Emotional", "New", "Exclusive"],
+      "summary": "Is this a true reunion or a false deception?\nWhen Jaeyi's half-brother Hongrang suddenly disappears, she bears the brunt of her wealthy family's scorn. 10 years later, a man claiming to be Hongrang appears, with much to gain should he truly be who he claims. Though Jaeyi can feel that something is off, the two seem somehow drawn to each other.",
+      "age_rating": "17+",
+      "creators": {
+          "illustration": "Hottu",
+          "writer": "Dokjin",
+          "original_story": "JANG dahye",
+          "localization": "Manta Comics"
+        },
+      "isNewSeason": "false",
+      "episodes": [
+      ]
+    },
+    {
+      "title": "I Don't Want to Be a Lady",
+      "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/140541a2-964e-4ec0-9955-3cbc5e44eaba",
+      "thumbnail_color": "#D3D3D3",
+      "tags": ["Romance", "Fantasy", "Contract", "Marriage", "Kingdom", "Badass female", "Fake relationship", "Overcoming the odds", "Confident", "Schemer", "Girl crush", "Has it rough", "Nice guy", "Sweet", "Novel based", "New", "Exclusive"],
+      "summary": "I'll be the one calling the shots.\nAfter enduring an upbringing full of torment, Lady Arianne refuses to be used as a means to anyone's end but her own. When her father moves to have her sold off as an additional mistress to the crown prince, she takes matters into her own hands by proposing a contract marriage with a duke instead!",
+      "age_rating": "17+",
+      "creators": {
+          "illustration": "yoonmuu",
+          "writer": "Seon",
+          "original_story": "Viyan",
+          "localization": "Manta Comics"
+        },
+      "isNewSeason": "false",
+      "episodes": [
+        {
+          "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/fd193e06-5f12-45fa-b7ec-d54c49673f50",
+          "title": "Episode 1"
+        },
+        {
+          "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/d45d4331-8a7b-442f-a259-72a14424038b",
+          "title": "Episode 2"
+        },
+        {
+          "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/85185682-416e-4b2c-a98d-681d5874a12c",
+          "title": "Episode 3"
+        },
+        {
+          "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/79b15f46-3363-443e-8785-f50b6763a43f",
+          "title": "Episode 4"
+        },
+        {
+          "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/c0577cee-5263-47ef-a3f9-1a0c2037c2ef",
+          "title": "Episode 5"
+        },
+        {
+          "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/2928f9e8-9ae6-42b0-b341-0f235eacf755",
+          "title": "Episode 6"
+        }
+      ]
+    },
   ]
 }
