@@ -14,7 +14,7 @@ public struct NewAndNowCore {
     public var forceShowingHeader: Bool
     public var notificationItemList: WebToonNotificationItemListCore.State
     public var webToonList: IdentifiedArrayOf<WebToonCore.State>
-    
+    var threshold: CGFloat = .zero
     public init(
       selectedReleaseStatus: WebToonCore.State.ReleaseStatus = .comingSoon,
       scrollCategoryList: [WebToonCore.State.ReleaseStatus] = WebToonCore.State.ReleaseStatus.allCases,
@@ -75,6 +75,9 @@ public struct NewAndNowCore {
       case .fetchResponse(let data):
         let comingSoon = data.comingSoon
           .map { $0.webToonState(uuid(), releaseStatus: .comingSoon) }
+        state.threshold = comingSoon
+          .map { $0.episodes.isEmpty ? 500.0 : 600 }
+          .reduce(into: 0, +=)
         let newArrivals = data.newArrivals
           .map { $0.webToonState(uuid(), releaseStatus: .newArrivals) }
         state.webToonList.append(contentsOf: comingSoon + newArrivals)

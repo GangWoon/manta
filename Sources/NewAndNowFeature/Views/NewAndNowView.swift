@@ -89,20 +89,34 @@ public struct NewAndNowView: View {
       
       ScrollViewReader { proxy in
         ScrollView(showsIndicators: false) {
-          LazyVStack {
-            ForEach(
-              store.scope(state: \.webToonList, action: \.webToonList)
-            ) { store in
+          VStack {
+            let list = Array(
+              zip(
+                store.webToonList.ids,
+                store.scope(state: \.webToonList, action: \.webToonList)
+              )
+            )
+            ForEach(list, id: \.0) { id, store in
               WebToonRow(store: store)
                 .padding(.top, 16)
-                .id(store.id)
-                .onAppear {
-                  guard !scrollValue.isScrolling else { return }
-                  store.send(.onAppear)
-                }
+                .id(id)
             }
           }
           .background { scrollDirectionTracker(outerHeight) }
+          .background {
+            GeometryReader { inner in
+              Color.clear
+                .preference(
+                  key: ScrollOffsetKey.self,
+                  value: -inner.frame(in: .named(coordinateSpace)).minY
+                )
+            }
+          }
+          .onPreferenceChange(ScrollOffsetKey.self) {
+            guard !scrollValue.isScrolling else { return }
+            let value = $0 > store.threshold ? WebToonCore.State.ReleaseStatus.newArrivals : .comingSoon
+            store.send(.binding(.set(\.selectedReleaseStatus, value)))
+          }
         }
         .simultaneousGesture(scrollStausTracker)
         .onChange(of: scrollValue) { newValue in
@@ -169,6 +183,13 @@ private extension NewAndNowView {
   struct ScrollValue: Equatable {
     var isScrolling: Bool
     var scrollID: UUID?
+  }
+  
+  struct ScrollOffsetKey: PreferenceKey {
+    static var defaultValue: CGFloat = .zero
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+      
+    }
   }
 }
 
