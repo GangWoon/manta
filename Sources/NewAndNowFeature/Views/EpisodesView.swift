@@ -5,7 +5,7 @@ import SwiftUI
 @Reducer
 public struct EpisodesCore {
   @ObservableState
-  public struct State: Equatable {
+  public struct State: Equatable, Sendable {
     // MARK: - ViewState
     fileprivate var thumbnailEpisodeURL: URL? {
       episodes.first?.thumbnail

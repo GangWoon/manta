@@ -69,18 +69,24 @@ public struct NewAndNowCore {
             case .undocumented(statusCode: let code):
               print(code)
             }
-          } catch { }
+          } catch { 
+            print(error)
+          }
         }
         
       case .fetchResponse(let data):
         let comingSoon = data.comingSoon
           .map { $0.webToonState(uuid(), releaseStatus: .comingSoon) }
-        state.threshold = comingSoon
-          .map { $0.episodes.isEmpty ? 500.0 : 600 }
-          .reduce(into: 0, +=)
         let newArrivals = data.newArrivals
           .map { $0.webToonState(uuid(), releaseStatus: .newArrivals) }
         state.webToonList.append(contentsOf: comingSoon + newArrivals)
+        print(newArrivals.map(\.isNewSeason))
+        
+        /// ViewState를 Reducer 내부로 가두는걸 선호하지 않지만, 
+        /// Reducer macro에서 발생하는 View에서 State변경 에러를 피하고자 추가햇습니다.
+        state.threshold = comingSoon
+          .map { $0.episodes.isEmpty ? 500.0 : 600 }
+          .reduce(into: 0, +=)
         return .none
         
       case .webToonList(.element(id: let id, action: let action)):
@@ -88,12 +94,6 @@ public struct NewAndNowCore {
           let webToonState = state.webToonList[id: id]
         else { return .none }
         switch action {
-        case .onAppear:
-          if state.selectedReleaseStatus != webToonState.releaseStatus {
-            state.selectedReleaseStatus = webToonState.releaseStatus
-          }
-          return .none
-          
         case .binding(\.isNotified):
           state.forceShowingHeader = true
           if webToonState.isNotified {
@@ -101,9 +101,7 @@ public struct NewAndNowCore {
               state.notificationItemList.itemList.insertSorted(item)
             }
           } else {
-            if let index = state.notificationItemList.itemList.firstIndex(where: { $0.id == id }) {
-              state.notificationItemList.itemList.remove(at: index)
-            }
+            state.notificationItemList.removeItem(with: id)
           }
           return .run { send in
             /// ScrollView가 정상적으로 동작하지 않아서 강제로 딜레이를 주고 scrollID가 설정되도록 구현했습니다.
@@ -150,6 +148,7 @@ private extension Components.Schemas.NewAndNow.WebToon {
       thumbnailURL: thumbnail,
       thumbnailColor: thumbnailColor,
       summary: summary,
+      isNewSeason: isNewSeason,
       episodes: .init(
         colorCode: thumbnailColor,
         episodes: episodes

@@ -2,7 +2,7 @@ import ComposableArchitecture
 import SwiftUI
 
 public struct WebToonNotificationItemListCore: Reducer {
-  public struct State: Equatable {
+  public struct State: Equatable, Sendable {
     struct NotificationItem: Sendable, Equatable, Identifiable {
       public var id: UUID
       public var thumbnail: URL?
@@ -14,16 +14,23 @@ public struct WebToonNotificationItemListCore: Reducer {
     }
     var itemList: [NotificationItem]
     var scrollID: NotificationItem.ID?
+    
+    mutating func removeItem(with id: NotificationItem.ID) {
+      if let index = self.itemList.firstIndex(where: { $0.id == id }) {
+        itemList.remove(at: index)
+      }
+    }
   }
   
   public enum Action: Equatable, Sendable {
     
   }
   
-  public var body: some ReducerOf<Self> {
-    Reduce<State, Action> { state, action in
-      return .none
-    }
+  public func reduce(
+    into state: inout State,
+    action: Action
+  ) -> Effect<Action> {
+    return .none
   }
 }
 

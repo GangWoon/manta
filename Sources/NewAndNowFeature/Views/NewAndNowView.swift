@@ -156,11 +156,8 @@ public struct NewAndNowView: View {
     {
       turningPoint = newValue
     }
-    
-    /// 스크롤 뷰 LazyVStack 내부 컨텐츠가 동적 높이를 갖기 때문에 저항값을 추가했습니다.
-    let register = 50.0
     if
-      (showingHeader && turningPoint > newValue + register)
+      (showingHeader && turningPoint > newValue)
       || (!showingHeader && (newValue - turningPoint) > thresholdScrollDistance)
     {
       showingHeader = newValue > turningPoint

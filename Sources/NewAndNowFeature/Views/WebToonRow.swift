@@ -30,7 +30,6 @@ public struct WebToonCore {
   }
   
   public enum Action: Equatable, Sendable, BindableAction {
-    case onAppear
     case episodes(EpisodesCore.Action)
     case binding(BindingAction<State>)
   }
@@ -43,12 +42,7 @@ public struct WebToonCore {
     }
     
     Reduce { state, action in
-      switch action {
-      case .onAppear,
-           .episodes,
-           .binding:
-        return .none
-      }
+        .none
     }
   }
 }
@@ -60,13 +54,12 @@ struct WebToonRow: View {
     WithPerceptionTracking {
       VStack(spacing: 2) {
         VStack(alignment: .leading) {
+          Spacer()
+            .frame(height: 16)
           if let date = store.releaseDate {
-            Spacer()
-              .frame(height: 16)
-            
             releaseDate(date)
           } else {
-            Text(store.isNewSeason ?? false ? "NEW SEASON" : "NEW")
+            eqisodeTag
           }
           
           Spacer()
@@ -112,6 +105,22 @@ struct WebToonRow: View {
     .background {
       RoundedRectangle(cornerRadius: 8)
         .fill(.manta.blackA05)
+    }
+  }
+  
+  private var eqisodeTag: some View {
+    Text(
+      store.isNewSeason ?? false
+      ? "NEW SEASON"
+      : "NEW"
+    )
+    .font(.system(size: 14).bold())
+    .foregroundStyle(.manta.white)
+    .padding(.vertical, 2)
+    .padding(.horizontal, 4)
+    .background {
+      RoundedRectangle(cornerRadius: 4)
+        .fill(Color.red)
     }
   }
   
@@ -239,13 +248,12 @@ private let monthFormatter = {
     store: Store(
       initialState: WebToonCore.State(
         id: .init(),
-        releaseDate: .now,
         title: "Choose Your Heroes Carefully",
         tags: ["BL", "Fantasy", "Adventure"],
         thumbnailURL: URL(string: "https://github.com/GangWoon/manta/assets/48466830/8d4487b9-a8fc-4612-9444-b5c5dc1b19c7"),
         thumbnailColor: "#5B7AA1",
         summary: "Stuck in a game with a lousy hero? Me too!\nMinjoon, a normal office worker, wakes up inside the game he was reviewing for his friend. It's not his fault the trailer was so boring it put him to sleep! Bewildered, Minjoon is tasked with summoning a hero to guide. The hero certainly looks strong, but he seems to be less useful than expected.",
-        isNewSeason: false,
+        isNewSeason: true,
         episodes: .init(
           colorCode: "#5B7AA1",
           episodes: [
