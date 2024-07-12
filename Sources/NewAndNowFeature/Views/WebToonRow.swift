@@ -20,6 +20,7 @@ public struct WebToonCore {
     public var title: String
     public var tags: [String]
     public var thumbnailURL: URL?
+    public var thumbnailSmallURL: URL?
     public var thumbnailColor: String
     public var summary: String
     

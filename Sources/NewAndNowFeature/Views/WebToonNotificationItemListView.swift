@@ -103,7 +103,7 @@ struct WebToonNotificationItemListView: View {
             }
           }
         }
-        .frame(height: 40)
+        .frame(height: 44)
         .onChange(of: viewStore.scrollID) {
           guard let id = $0 else { return }
           withAnimation { proxy.scrollTo(id) }

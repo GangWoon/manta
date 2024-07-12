@@ -130,7 +130,7 @@ extension WebToonCore.State {
     if let releaseDate {
       return .init(
         id: id,
-        thumbnail: thumbnailURL,
+        thumbnail: thumbnailSmallURL,
         releaseDate: releaseDate
       )
     }
@@ -146,6 +146,7 @@ private extension Components.Schemas.NewAndNow.WebToon {
       title: title,
       tags: tags,
       thumbnailURL: thumbnail,
+      thumbnailSmallURL: thumbnailSmall,
       thumbnailColor: thumbnailColor,
       summary: summary,
       isNewSeason: isNewSeason,

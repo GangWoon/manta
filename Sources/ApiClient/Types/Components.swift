@@ -12,6 +12,7 @@ extension Components.Schemas {
       public var releaseDate: Date?
       public var title: String
       public var thumbnail: URL?
+      public var thumbnailSmall: URL?
       public var thumbnailColor: String
       public var tags: [String]
       public var summary: String
@@ -52,6 +53,9 @@ extension Components.Schemas.NewAndNow.WebToon: Codable {
     self.title = try container.decode(String.self, forKey: .title)
     let urlString = try container.decode(String.self, forKey: .thumbnail)
     self.thumbnail = URL(string: urlString)
+    if let thumbnailSmallUrlString = try container.decodeIfPresent(String.self, forKey: .thumbnailSmall) {
+      self.thumbnailSmall = URL(string: thumbnailSmallUrlString)
+    }
     self.thumbnailColor = try container.decode(String.self, forKey: .thumbnailColor)
     self.tags = try container.decode([String].self, forKey: .tags)
     self.summary = try container.decode(String.self, forKey: .summary)
