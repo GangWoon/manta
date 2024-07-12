@@ -1,19 +1,20 @@
 import ComposableArchitecture
+import ViewHelper
 import SwiftUI
 
 public struct WebToonNotificationItemListCore: Reducer {
   public struct State: Equatable, Sendable {
+    var isEmpty: Bool {
+      itemList.isEmpty
+    }
+    
+    var scrollID: NotificationItem.ID?
+    var itemList: [NotificationItem]
     struct NotificationItem: Sendable, Equatable, Identifiable {
       public var id: UUID
       public var thumbnail: URL?
       public var releaseDate: Date
-      
     }
-    var isEmpty: Bool {
-      itemList.isEmpty
-    }
-    var itemList: [NotificationItem]
-    var scrollID: NotificationItem.ID?
     
     mutating func removeItem(with id: NotificationItem.ID) {
       if let index = self.itemList.firstIndex(where: { $0.id == id }) {
@@ -30,7 +31,7 @@ public struct WebToonNotificationItemListCore: Reducer {
     into state: inout State,
     action: Action
   ) -> Effect<Action> {
-    return .none
+    .none
   }
 }
 
@@ -61,15 +62,30 @@ struct WebToonNotificationItemListView: View {
                   .resizable()
                   .clipShape(Circle())
                   .frame(width: 32, height: 32)
-                
               } placeholder: {
                 Color.clear
                   .frame(width: 32, height: 32)
                 
               }
               .frame(width: 32, height: 32)
+              .overlay(alignment: .topTrailing) {
+                if notificationItem.nowAvailable {
+                  Text("N")
+                    .foregroundStyle(.manta.white)
+                    .font(.system(size: 6).bold())
+                    .padding(2)
+                    .background {
+                      Circle()
+                        .fill(Color.red)
+                        .overlay {
+                          Circle()
+                            .stroke(Color.black, lineWidth: 2)
+                        }
+                    }
+                }
+              }
               
-              Text(daysUntil(notificationItem.releaseDate))
+              Text(notificationItem.dDay)
                 .padding(.trailing)
                 .foregroundStyle(.manta.white)
             }
@@ -77,7 +93,13 @@ struct WebToonNotificationItemListView: View {
             .padding(4)
             .background {
               Capsule()
-                .fill(.manta.black)
+                .fillAndStroke(
+                  fill: .black,
+                  stroke: notificationItem.nowAvailable
+                  ? .palette
+                  : .transparent,
+                  lineWidth: 1.5
+                )
             }
           }
         }
@@ -91,23 +113,43 @@ struct WebToonNotificationItemListView: View {
     .scrollIndicators(.hidden)
     
   }
+}
+
+private let comparedDate: Date = {
+  var calendar = Calendar.current
+  calendar.timeZone = TimeZone(identifier: "Asia/Seoul")!
+  let dateComponents = DateComponents(year: 2024, month: 7, day: 3)
+  return calendar.date(from: dateComponents)!
+}()
+
+extension WebToonNotificationItemListCore.State.NotificationItem {
+  var nowAvailable: Bool {
+    daysDifference(from: comparedDate, to: releaseDate) <= 0
+  }
   
-  private let comparedDate: Date = {
-    var calendar = Calendar.current
-    calendar.timeZone = TimeZone(identifier: "Asia/Seoul")!
-    let dateComponents = DateComponents(year: 2024, month: 7, day: 3)
-    return calendar.date(from: dateComponents)!
-  }()
-  
-  private func daysUntil(_ date: Date) -> String {
-    let calendar = Calendar.current
-    let components = calendar
-      .dateComponents([.day], from: comparedDate, to: date)
-    guard let diff = components.day else { return "" }
+  var dDay: String {
+    let diff = daysDifference(from: comparedDate, to: releaseDate)
     return diff <= 0 ? "Read now" : "D - \(diff)"
+  }
+  
+  private func daysDifference(from startDate: Date, to endDate: Date) -> Int {
+    let calendar = Calendar.current
+    let components = calendar.dateComponents([.day], from: startDate, to: endDate)
+    return components.day ?? 0
   }
 }
 
+#if DEBUG
+var dates: [Date] = {
+  var calendar = Calendar.current
+  calendar.timeZone = TimeZone(identifier: "Asia/Seoul")!
+  return [
+    DateComponents(year: 2024, month: 7, day: 3),
+    DateComponents(year: 2024, month: 7, day: 5),
+    DateComponents(year: 2024, month: 7, day: 13)
+  ]
+    .compactMap { calendar.date(from: $0) }
+}()
 
 @available(iOS 17.0, *)
 #Preview {
@@ -118,17 +160,17 @@ struct WebToonNotificationItemListView: View {
           .init(
             id: UUID(),
             thumbnail: URL(string: "https://github.com/GangWoon/manta/assets/48466830/8d4487b9-a8fc-4612-9444-b5c5dc1b19c7"),
-            releaseDate: .now
+            releaseDate: dates[0]
           ),
           .init(
             id: UUID(),
             thumbnail: URL(string: "https://github.com/GangWoon/manta/assets/48466830/8d4487b9-a8fc-4612-9444-b5c5dc1b19c7"),
-            releaseDate: .now
+            releaseDate: dates[1]
           ),
           .init(
             id: UUID(),
             thumbnail: URL(string: "https://github.com/GangWoon/manta/assets/48466830/8d4487b9-a8fc-4612-9444-b5c5dc1b19c7"),
-            releaseDate: .now
+            releaseDate: dates[2]
           ),
         ]
       ),
@@ -136,3 +178,5 @@ struct WebToonNotificationItemListView: View {
     )
   )
 }
+#endif
+
