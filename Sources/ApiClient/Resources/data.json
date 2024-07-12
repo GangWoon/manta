@@ -233,9 +233,7 @@
           "localization": "Manta Comics",
           "original_story": "Ja Seo Hyeon"
         },
-      "isNewSeason": "false",
-      "episodes": [
-      ]
+      "is_new_season": "false"
     },
     {
       "title": "By My Side",
@@ -249,7 +247,7 @@
           "writer": "Junghyun",
           "localization": "Manta Comics"
         },
-      "isNewSeason": "true",
+      "is_new_season": "true",
       "episodes": [
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/a107b3be-b6e6-406d-91e4-4dba3e21a2e1",
@@ -286,9 +284,7 @@
           "original_story": "JANG dahye",
           "localization": "Manta Comics"
         },
-      "isNewSeason": "false",
-      "episodes": [
-      ]
+      "is_new_season": "false"
     },
     {
       "title": "I Don't Want to Be a Lady",
@@ -303,7 +299,7 @@
           "original_story": "Viyan",
           "localization": "Manta Comics"
         },
-      "isNewSeason": "false",
+      "is_new_season": "false",
       "episodes": [
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/fd193e06-5f12-45fa-b7ec-d54c49673f50",

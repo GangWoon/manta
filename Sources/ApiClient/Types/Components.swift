@@ -46,8 +46,8 @@ extension Components.Schemas {
 // MARK: - WebToon Codable
 extension Components.Schemas.NewAndNow.WebToon: Codable {
   public init(from decoder: any Decoder) throws {
-    let container = try decoder.container(keyedBy: Components.Schemas.NewAndNow.WebToon.CodingKeys.self)
-    self.id = (try? container.decode(UUID.self, forKey: Components.Schemas.NewAndNow.WebToon.CodingKeys.id)) ?? UUID()
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    self.id = (try? container.decode(UUID.self, forKey: .id)) ?? UUID()
     self.releaseDate = try container.decodeIfPresent(Date.self, forKey: .releaseDate)
     self.title = try container.decode(String.self, forKey: .title)
     let urlString = try container.decode(String.self, forKey: .thumbnail)
@@ -58,6 +58,11 @@ extension Components.Schemas.NewAndNow.WebToon: Codable {
     self.ageRating = try container.decode(String.self, forKey: .ageRating)
     self.creators = try container.decode(Components.Schemas.NewAndNow.WebToon.Creators.self, forKey: .creators)
     self.episodes = (try? container.decode([Episode].self, forKey: .episodes)) ?? []
+    if let isNewSeasonString = try? container.decode(String.self, forKey: .isNewSeason) {
+        self.isNewSeason = isNewSeasonString.lowercased() == "true"
+    } else {
+        self.isNewSeason = try container.decodeIfPresent(Bool.self, forKey: .isNewSeason)
+    }
   }
 }
 
