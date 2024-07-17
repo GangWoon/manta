@@ -1,5 +1,5 @@
 import ComposableArchitecture
-import ApiClient
+import SharedModels
 import SwiftUI
 
 @Reducer
@@ -24,7 +24,7 @@ public struct EpisodesCore {
     }
     var isExpanded: Bool = false
     var colorCode: String
-    var episodes: [Components.Schemas.NewAndNow.WebToon.Episode]
+    var episodes: [Webtoon.Episode]
   }
   
   public enum Action: Equatable, Sendable, BindableAction {

@@ -1,3 +1,4 @@
+import SharedModels
 import Foundation
 
 public enum Operations {

@@ -18,7 +18,10 @@ let package = Package(
       name: "NewAndNowFeature",
       dependencies: [
         "ApiClient",
-        .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+        "SharedModels"
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+        "SharedModels"
       ]
     ),
     .target(
@@ -26,10 +29,11 @@ let package = Package(
       dependencies: [
         .product(name: "Dependencies", package: "swift-dependencies"),
         .product(name: "DependenciesMacros", package: "swift-dependencies"),
-        "ViewHelper"
+        "SharedModels"
       ],
       resources: [.process("Resources")]
     ),
-    .target(name: "ViewHelper")
+    .target(name: "ViewHelper"),
+    .target(name: "SharedModels")
   ]
 )

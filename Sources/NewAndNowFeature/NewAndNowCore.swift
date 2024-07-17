@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import SharedModels
 import Foundation
 import ApiClient
 
@@ -138,7 +139,7 @@ extension WebToonCore.State {
   }
 }
 
-private extension Components.Schemas.NewAndNow.WebToon {
+private extension Webtoon {
   func webToonState(_ id: UUID, releaseStatus: WebToonCore.State.ReleaseStatus) -> WebToonCore.State {
     .init(
       id: id,
