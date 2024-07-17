@@ -28,10 +28,13 @@ public struct NewAndNowView: View {
         dashboard
           .padding(.horizontal, 16)
         
-        if showingHeader && !store.notificationItemList.isEmpty {
-          WebToonNotificationItemListView(
-            store: store
-              .scope(state: \.notificationItemList, action: \.notificationItemList)
+        if showingHeader && !store.notificationItems.isEmpty {
+          WebToonNotificationItemList(
+            notificationItems: store.notificationItems,
+            scrollID: store.notificationItemScrollID,
+            rowAction: { id in
+              store.send(.notificationItemTapped(id))
+            }
           )
           .frame(height: 48)
         }
@@ -69,7 +72,7 @@ public struct NewAndNowView: View {
   private var scrollViewHeader: some View {
     AnimatedUnderlineTabBar(
       currentTab: $store.selectedReleaseStatus,
-      itemList: store.scrollCategoryList
+      items: store.releaseCategories
     ) { item in
       Text(item.title)
         .foregroundStyle(
@@ -106,9 +109,9 @@ public struct NewAndNowView: View {
           }
         }
         .background { scrollDirectionTracker(outerHeight) }
-        .readScrollOffset(coordinateSpace) {
+        .readScrollOffset(coordinateSpace) { offset in
           guard !scrollValue.isScrolling else { return }
-          let value = $0 > store.categoryChangeHeight
+          let value = offset > store.categoryChangeHeight
           ? WebToonCore.State.ReleaseStatus.newArrivals
           : .comingSoon
           store.send(.binding(.set(\.selectedReleaseStatus, value)))

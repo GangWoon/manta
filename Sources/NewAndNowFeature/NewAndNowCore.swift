@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import WebtoonDetailFeature
 import SharedModels
 import Foundation
 import ApiClient
@@ -9,40 +10,38 @@ public struct NewAndNowCore {
   public struct State: Equatable, Sendable {
     /// 복잡한 스크롤 뷰 로직은 뷰에서만 처리하려고 설계했지만, 스크롤 뷰 해더를 강제적으로 노출시키기 위해서 만든 값입니다.
     /// 해더를 노출시키기는 로직을 리듀서 내부에서 관리하시며 안됩니다.
-    public var forceShowingHeader: Bool
-    public var threshold: CGFloat = .zero
-    
-    public var selectedReleaseStatus: WebToonCore.State.ReleaseStatus
-    public var scrollCategoryList: [WebToonCore.State.ReleaseStatus]
-    public var notificationItemList: WebToonNotificationItemListCore.State
-    public var webToonList: IdentifiedArrayOf<WebToonCore.State>
-    
-    public init(
-      selectedReleaseStatus: WebToonCore.State.ReleaseStatus = .comingSoon,
-      scrollCategoryList: [WebToonCore.State.ReleaseStatus] = WebToonCore.State.ReleaseStatus.allCases,
-      forceShowingHeader: Bool = false,
-      webToonList: IdentifiedArrayOf<WebToonCore.State> = []
-    ) {
-      self.selectedReleaseStatus = selectedReleaseStatus
-      self.scrollCategoryList = scrollCategoryList
-      self.forceShowingHeader = forceShowingHeader
-      self.webToonList = webToonList
-      self.notificationItemList = .init(itemList: [])
+    public var forceShowingHeader: Bool = false
+    public var categoryChangeHeight: CGFloat = .zero
+    var scrollThreshold: CGFloat {
+      webtoonRows
+        .filter { $0.releaseStatus == .comingSoon }
+        .map { $0.episodes.isEmpty ? 500.0 : 600 }
+        .reduce(into: 0, +=)
     }
     
-    func scrollID(for releaseStatus: WebToonCore.State.ReleaseStatus) -> WebToonCore.State.ID? {
-      webToonList
-        .filter { $0.releaseStatus == releaseStatus }
-        .first?
-        .id
+    public var webtoons: [Webtoon] = []
+    public var webtoonRows: IdentifiedArrayOf<WebToonCore.State> = []
+    public var selectedWebtoonRow: WebtoonDetail.State?
+    public var selectedReleaseStatus: WebToonCore.State.ReleaseStatus = .comingSoon
+    public var releaseCategories: [WebToonCore.State.ReleaseStatus] = WebToonCore.State.ReleaseStatus.allCases
+    
+    public var notificationItemScrollID: NotificationItem.ID?
+    public var notificationItems: [NotificationItem] = []
+    public struct NotificationItem: Sendable, Equatable, Identifiable {
+      public var id: UUID
+      public var thumbnail: URL?
+      public var releaseDate: Date
     }
+    
+    public init() { }
   }
   
   public enum Action: Equatable, Sendable, BindableAction {
     case prepare
     case fetchResponse(Components.Schemas.NewAndNow)
-    case webToonList(IdentifiedActionOf<WebToonCore>)
-    case notificationItemList(WebToonNotificationItemListCore.Action)
+    case notificationItemTapped(State.NotificationItem.ID)
+    case webtoonRows(IdentifiedActionOf<WebToonCore>)
+    case webtoonDetail(WebtoonDetail.Action)
     case binding(BindingAction<State>)
   }
   
@@ -53,11 +52,7 @@ public struct NewAndNowCore {
   
   public var body: some ReducerOf<Self> {
     BindingReducer()
-    
-    Scope(state: \.notificationItemList, action: \.notificationItemList) {
-      WebToonNotificationItemListCore()
-    }
-    
+
     Reduce<State, Action> { state, action in
       switch action {
       case .prepare:
@@ -77,71 +72,70 @@ public struct NewAndNowCore {
         }
         
       case .fetchResponse(let data):
-        let comingSoon = data.comingSoon
-          .map { $0.webToonState(uuid(), releaseStatus: .comingSoon) }
-        let newArrivals = data.newArrivals
-          .map { $0.webToonState(uuid(), releaseStatus: .newArrivals) }
-        state.webToonList.append(contentsOf: comingSoon + newArrivals)
-        print(newArrivals.map(\.isNewSeason))
+        let webtoons = data.webtoons
+        state.webtoons = webtoons
+        state.webtoonRows.append(contentsOf: webtoons.map(\.webtoonRow))
         
-        /// ViewState를 Reducer 내부로 가두는걸 선호하지 않지만, 
+        /// ViewState를 Reducer 내부로 가두는걸 선호하지 않지만,
         /// Reducer macro에서 발생하는 View에서 State변경 에러를 피하고자 추가햇습니다.
-        state.threshold = comingSoon
-          .map { $0.episodes.isEmpty ? 500.0 : 600 }
-          .reduce(into: 0, +=)
+        state.categoryChangeHeight = state.scrollThreshold
         return .none
         
-      case .webToonList(.element(id: let id, action: let action)):
+      case .notificationItemTapped(let id):
+        return .none
+        
+      case .webtoonRows(.element(id: let id, action: let action)):
         guard
-          let webToonState = state.webToonList[id: id]
+          let webToonState = state.webtoonRows[id: id]
         else { return .none }
         switch action {
+        case .tapped:
+          return .none
+          
         case .binding(\.isNotified):
           state.forceShowingHeader = true
           if webToonState.isNotified {
             if let item = webToonState.notificationItem {
-              state.notificationItemList.itemList.insertSorted(item)
+              state.notificationItems.insertSorted(item)
             }
           } else {
-            state.notificationItemList.removeItem(with: id)
+            if let index = state.notificationItems.firstIndex(where: { $0.id == id }) {
+              state.notificationItems.remove(at: index)
+            }
           }
           return .run { send in
             /// ScrollView가 정상적으로 동작하지 않아서 강제로 딜레이를 주고 scrollID가 설정되도록 구현했습니다.
             try await Task.sleep(for: .seconds((0.1)))
-            await send(.binding(.set(\.notificationItemList.scrollID, webToonState.isNotified ? id : nil)))
+            await send(.binding(.set(\.notificationItemScrollID, webToonState.isNotified ? id : nil)))
           }
           
         default:
           return .none
         }
         
-      case .webToonList,
-          .notificationItemList,
+      case .webtoonRows,
           .binding:
         return .none
       }
     }
-    .forEach(\.webToonList, action: \.webToonList) {
+    .forEach(\.webtoonRows, action: \.webtoonRows) {
       WebToonCore()
+    }
+    .ifLet(\.selectedWebtoonRow, action: \.webtoonDetail) {
+      WebtoonDetail()
     }
   }
 }
 
-extension WebToonCore.State {
-  var notificationItem: WebToonNotificationItemListCore.State.NotificationItem? {
-    if let releaseDate {
-      return .init(
-        id: id,
-        thumbnail: thumbnailSmallURL,
-        releaseDate: releaseDate
-      )
-    }
-    return nil
+// MARK: - Components
+private extension Components.Schemas.NewAndNow {
+  var webtoons: [Webtoon] {
+    comingSoon + newArrivals
   }
 }
 
 private extension Webtoon {
-  func webToonState(_ id: UUID, releaseStatus: WebToonCore.State.ReleaseStatus) -> WebToonCore.State {
+  var webtoonRow: WebToonCore.State {
     .init(
       id: id,
       releaseDate: releaseDate,
@@ -157,6 +151,19 @@ private extension Webtoon {
         episodes: episodes
       )
     )
+  }
+}
+
+extension WebToonCore.State {
+  var notificationItem: NewAndNowCore.State.NotificationItem? {
+    if let releaseDate {
+      return .init(
+        id: id,
+        thumbnail: thumbnailSmallURL,
+        releaseDate: releaseDate
+      )
+    }
+    return nil
   }
 }
 

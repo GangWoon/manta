@@ -5,20 +5,20 @@ public struct AnimatedUnderlineTabBar<Content: View, Underline: View, Item: Hash
   
   var spacing: CGFloat
   @Binding var currentTab: Item
-  var itemList: [Item]
+  var items: [Item]
   var tabBarItem: (Item) -> Content
   var underline: () -> Underline
   
   public init(
     spacing: CGFloat = 20,
     currentTab: Binding<Item>,
-    itemList: [Item],
+    items: [Item],
     tabBarItem: @escaping (Item) -> Content,
     underline: @escaping () -> Underline
   ) {
     self.spacing = spacing
     self._currentTab = currentTab
-    self.itemList = itemList
+    self.items = items
     self.tabBarItem = tabBarItem
     self.underline = underline
   }
@@ -26,7 +26,7 @@ public struct AnimatedUnderlineTabBar<Content: View, Underline: View, Item: Hash
   public var body: some View {
     ScrollView(.horizontal, showsIndicators: false) {
       HStack(spacing: spacing) {
-        let list = Array(zip(itemList.indices, itemList))
+        let list = Array(zip(items.indices, items))
         ForEach(list, id: \.0) { index, item in
           TabBarItem(
             currentTab: $currentTab,
