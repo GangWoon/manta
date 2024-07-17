@@ -8,14 +8,6 @@ public struct WebToonCore {
   @ObservableState
   public struct State: Equatable, Sendable, Identifiable {
     public var id: UUID
-    public var releaseStatus: ReleaseStatus {
-      releaseDate != nil ? .comingSoon : .newArrivals
-    }
-    public enum ReleaseStatus: Hashable, Sendable, CaseIterable {
-      case comingSoon
-      case newArrivals
-    }
-    
     public var releaseDate: Date?
     public var title: String
     public var tags: [String]
@@ -23,10 +15,17 @@ public struct WebToonCore {
     public var thumbnailSmallURL: URL?
     public var thumbnailColor: String
     public var summary: String
-    
-    public var isSummaryExpaneded: Bool = false
     public var isNewSeason: Bool?
     public var episodes: EpisodesCore.State
+    
+    public var releaseStatus: ReleaseStatus {
+      releaseDate != nil ? .comingSoon : .newArrivals
+    }
+    public enum ReleaseStatus: Hashable, Sendable, CaseIterable {
+      case comingSoon
+      case newArrivals
+    }
+    public var isSummaryExpaneded: Bool = false
     public var isNotified: Bool = false
   }
   

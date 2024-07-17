@@ -7,15 +7,16 @@ import ApiClient
 public struct NewAndNowCore {
   @ObservableState
   public struct State: Equatable, Sendable {
-    public var selectedReleaseStatus: WebToonCore.State.ReleaseStatus
-    public var scrollCategoryList: [WebToonCore.State.ReleaseStatus]
-    
     /// 복잡한 스크롤 뷰 로직은 뷰에서만 처리하려고 설계했지만, 스크롤 뷰 해더를 강제적으로 노출시키기 위해서 만든 값입니다.
     /// 해더를 노출시키기는 로직을 리듀서 내부에서 관리하시며 안됩니다.
     public var forceShowingHeader: Bool
+    public var threshold: CGFloat = .zero
+    
+    public var selectedReleaseStatus: WebToonCore.State.ReleaseStatus
+    public var scrollCategoryList: [WebToonCore.State.ReleaseStatus]
     public var notificationItemList: WebToonNotificationItemListCore.State
     public var webToonList: IdentifiedArrayOf<WebToonCore.State>
-    var threshold: CGFloat = .zero
+    
     public init(
       selectedReleaseStatus: WebToonCore.State.ReleaseStatus = .comingSoon,
       scrollCategoryList: [WebToonCore.State.ReleaseStatus] = WebToonCore.State.ReleaseStatus.allCases,

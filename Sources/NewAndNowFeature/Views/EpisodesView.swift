@@ -6,6 +6,12 @@ import SwiftUI
 public struct EpisodesCore {
   @ObservableState
   public struct State: Equatable, Sendable {
+    var isEmpty: Bool {
+      episodes.isEmpty
+    }
+    var colorCode: String
+    var episodes: [Webtoon.Episode]
+    
     // MARK: - ViewState
     fileprivate var thumbnailEpisodeURL: URL? {
       episodes.first?.thumbnail
@@ -18,13 +24,7 @@ public struct EpisodesCore {
     fileprivate var arrowImageName: String {
       "chevron.\(isExpanded ? "up": "down")"
     }
-    
-    var isEmpty: Bool {
-      episodes.isEmpty
-    }
     var isExpanded: Bool = false
-    var colorCode: String
-    var episodes: [Webtoon.Episode]
   }
   
   public enum Action: Equatable, Sendable, BindableAction {
