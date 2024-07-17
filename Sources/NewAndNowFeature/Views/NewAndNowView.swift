@@ -103,18 +103,11 @@ public struct NewAndNowView: View {
             }
           }
           .background { scrollDirectionTracker(outerHeight) }
-          .background {
-            GeometryReader { inner in
-              Color.clear
-                .preference(
-                  key: ScrollOffsetKey.self,
-                  value: -inner.frame(in: .named(coordinateSpace)).minY
-                )
-            }
-          }
-          .onPreferenceChange(ScrollOffsetKey.self) {
+          .readScrollOffset(coordinateSpace) {
             guard !scrollValue.isScrolling else { return }
-            let value = $0 > store.threshold ? WebToonCore.State.ReleaseStatus.newArrivals : .comingSoon
+            let value = $0 > store.categoryChangeHeight
+            ? WebToonCore.State.ReleaseStatus.newArrivals
+            : .comingSoon
             store.send(.binding(.set(\.selectedReleaseStatus, value)))
           }
         }
