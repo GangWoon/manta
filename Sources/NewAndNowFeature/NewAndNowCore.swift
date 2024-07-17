@@ -22,8 +22,12 @@ public struct NewAndNowCore {
     public var webtoons: [Webtoon] = []
     public var webtoonRows: IdentifiedArrayOf<WebToonCore.State> = []
     public var selectedWebtoonRow: WebtoonDetail.State?
-    public var selectedReleaseStatus: WebToonCore.State.ReleaseStatus = .comingSoon
-    public var releaseCategories: [WebToonCore.State.ReleaseStatus] = WebToonCore.State.ReleaseStatus.allCases
+    public var selectedReleaseStatus: ReleaseStatus = .comingSoon
+    public var releaseCategories: [ReleaseStatus] = ReleaseStatus.allCases
+    public enum ReleaseStatus: Hashable, Sendable, CaseIterable {
+      case comingSoon
+      case newArrivals
+    }
     
     public var notificationItemScrollID: NotificationItem.ID?
     public var notificationItems: [NotificationItem] = []
@@ -164,6 +168,10 @@ extension WebToonCore.State {
       )
     }
     return nil
+  }
+  
+  var releaseStatus: NewAndNowCore.State.ReleaseStatus {
+    releaseDate != nil ? .comingSoon : .newArrivals
   }
 }
 

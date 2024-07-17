@@ -112,7 +112,7 @@ public struct NewAndNowView: View {
         .readScrollOffset(coordinateSpace) { offset in
           guard !scrollValue.isScrolling else { return }
           let value = offset > store.categoryChangeHeight
-          ? WebToonCore.State.ReleaseStatus.newArrivals
+          ? NewAndNowCore.State.ReleaseStatus.newArrivals
           : .comingSoon
           store.send(.binding(.set(\.selectedReleaseStatus, value)))
         }
@@ -167,7 +167,7 @@ public struct NewAndNowView: View {
 }
 
 private extension NewAndNowCore.State {
-  func scrollID(for releaseStatus: WebToonCore.State.ReleaseStatus) -> WebToonCore.State.ID? {
+  func scrollID(for releaseStatus: ReleaseStatus) -> WebToonCore.State.ID? {
     webtoonRows
       .filter { $0.releaseStatus == releaseStatus }
       .first?
@@ -175,7 +175,7 @@ private extension NewAndNowCore.State {
   }
 }
 
-extension WebToonCore.State.ReleaseStatus {
+extension NewAndNowCore.State.ReleaseStatus {
   fileprivate var title: String {
     switch self {
     case .comingSoon:

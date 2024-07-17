@@ -17,14 +17,7 @@ public struct WebToonCore {
     public var summary: String
     public var isNewSeason: Bool?
     public var episodes: EpisodesCore.State
-    
-    public var releaseStatus: ReleaseStatus {
-      releaseDate != nil ? .comingSoon : .newArrivals
-    }
-    public enum ReleaseStatus: Hashable, Sendable, CaseIterable {
-      case comingSoon
-      case newArrivals
-    }
+
     public var isSummaryExpaneded: Bool = false
     public var isNotified: Bool = false
   }
