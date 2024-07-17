@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AEBACCA62C2EB7E20023ECC6 /* NewAndNowFeature in Frameworks */ = {isa = PBXBuildFile; productRef = AEBACCA52C2EB7E20023ECC6 /* NewAndNowFeature */; };
+		AE92432F2C47E8E60026DD26 /* AppFeature in Frameworks */ = {isa = PBXBuildFile; productRef = AE92432E2C47E8E60026DD26 /* AppFeature */; };
 		AEFFE6B82C29A4E500EDEC8A /* mantaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEFFE6B72C29A4E500EDEC8A /* mantaApp.swift */; };
 		AEFFE6BC2C29A4E600EDEC8A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AEFFE6BB2C29A4E600EDEC8A /* Assets.xcassets */; };
 		AEFFE6BF2C29A4E600EDEC8A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AEFFE6BE2C29A4E600EDEC8A /* Preview Assets.xcassets */; };
@@ -26,7 +26,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AEBACCA62C2EB7E20023ECC6 /* NewAndNowFeature in Frameworks */,
+				AE92432F2C47E8E60026DD26 /* AppFeature in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,7 +93,7 @@
 			);
 			name = manta;
 			packageProductDependencies = (
-				AEBACCA52C2EB7E20023ECC6 /* NewAndNowFeature */,
+				AE92432E2C47E8E60026DD26 /* AppFeature */,
 			);
 			productName = manta;
 			productReference = AEFFE6B42C29A4E500EDEC8A /* manta.app */;
@@ -359,9 +359,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		AEBACCA52C2EB7E20023ECC6 /* NewAndNowFeature */ = {
+		AE92432E2C47E8E60026DD26 /* AppFeature */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = NewAndNowFeature;
+			productName = AppFeature;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
