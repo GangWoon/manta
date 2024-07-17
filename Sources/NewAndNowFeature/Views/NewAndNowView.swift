@@ -5,12 +5,16 @@ import SwiftUI
 
 public struct NewAndNowView: View {
   // MARK: - ViewState
+  @Namespace private var animation
   @State private var showingHeader = true
   @State private var turningPoint = CGFloat.zero
-  private let thresholdScrollDistance: CGFloat = 50
   private let coordinateSpace = "ScrollView"
   
   @State private var scrollValue: ScrollValue = .init(isScrolling: false)
+  struct ScrollValue: Equatable {
+    var isScrolling: Bool
+    var scrollID: UUID?
+  }
   
   @Perception.Bindable var store: StoreOf<NewAndNowCore>
   
@@ -86,44 +90,33 @@ public struct NewAndNowView: View {
   private var scrollView: some View {
     GeometryReader { outer in
       let outerHeight = outer.size.height
-      
-      ScrollViewReader { proxy in
-        ScrollView(showsIndicators: false) {
-          VStack {
-            let list = Array(
-              zip(
-                store.webToonList.ids,
-                store.scope(state: \.webToonList, action: \.webToonList)
-              )
+      AutoScrollView(anchor: .top, scrollID: scrollValue.scrollID) {
+        VStack {
+          let list = Array(
+            zip(
+              store.webtoonRows.ids,
+              store.scope(state: \.webtoonRows, action: \.webtoonRows)
             )
-            ForEach(list, id: \.0) { id, store in
-              WebToonRow(store: store)
-                .padding(.top, 16)
-                .id(id)
-            }
-          }
-          .background { scrollDirectionTracker(outerHeight) }
-          .readScrollOffset(coordinateSpace) {
-            guard !scrollValue.isScrolling else { return }
-            let value = $0 > store.categoryChangeHeight
-            ? WebToonCore.State.ReleaseStatus.newArrivals
-            : .comingSoon
-            store.send(.binding(.set(\.selectedReleaseStatus, value)))
+          )
+          ForEach(list, id: \.0) { id, store in
+            WebToonRow(store: store)
+              .padding(.top, 16)
+              .id(id)
+            /// store.id로 했을 경우 스크롤 되지 않는 이슈 발생
           }
         }
-        .simultaneousGesture(scrollStausTracker)
-        .onChange(of: scrollValue) { newValue in
-          guard let scrollID = newValue.scrollID else { return }
-          withAnimation(.easeIn(duration: 1)) { proxy.scrollTo(scrollID, anchor: .top) }
-          if newValue.isScrolling {
-            Task {
-              try await Task.sleep(for: .seconds(1))
-              scrollValue.isScrolling = false
-            }
-          }
+        .background { scrollDirectionTracker(outerHeight) }
+        .readScrollOffset(coordinateSpace) {
+          guard !scrollValue.isScrolling else { return }
+          let value = $0 > store.categoryChangeHeight
+          ? WebToonCore.State.ReleaseStatus.newArrivals
+          : .comingSoon
+          store.send(.binding(.set(\.selectedReleaseStatus, value)))
         }
       }
       .coordinateSpace(name: coordinateSpace)
+      .simultaneousGesture(scrollStausTracker)
+      .scrollIndicators(.hidden)
     }
     .padding(.top, 1)
   }
@@ -143,6 +136,7 @@ public struct NewAndNowView: View {
   }
   
   private func updateShowingHeader(oldValue: CGFloat, newValue: CGFloat) {
+    let thresholdScrollDistance: CGFloat = 50
     if
       (showingHeader && newValue > oldValue)
       || (!showingHeader && newValue < oldValue)
@@ -169,17 +163,12 @@ public struct NewAndNowView: View {
   }
 }
 
-private extension NewAndNowView {
-  struct ScrollValue: Equatable {
-    var isScrolling: Bool
-    var scrollID: UUID?
-  }
-  
-  struct ScrollOffsetKey: PreferenceKey {
-    static var defaultValue: CGFloat = .zero
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-      
-    }
+private extension NewAndNowCore.State {
+  func scrollID(for releaseStatus: WebToonCore.State.ReleaseStatus) -> WebToonCore.State.ID? {
+    webtoonRows
+      .filter { $0.releaseStatus == releaseStatus }
+      .first?
+      .id
   }
 }
 
