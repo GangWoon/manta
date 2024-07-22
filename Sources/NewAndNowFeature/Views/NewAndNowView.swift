@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import WebtoonDetailFeature
 import ViewHelper
 import ApiClient
 import SwiftUI
@@ -49,10 +50,19 @@ public struct NewAndNowView: View {
         scrollView
           .padding(.horizontal, 16)
       }
-      .background { Color.manta.deepGray.ignoresSafeArea() }
-      .animation(.easeInOut, value: showingHeader)
       .task { await store.send(.prepare).finish() }
       .bind($showingHeader, to: $store.forceShowingHeader)
+      .animation(.easeInOut, value: showingHeader)
+      .background { Color.manta.deepGray.ignoresSafeArea() }
+      .overlay {
+        let store = store.scope(state: \.selectedWebtoonRow, action: \.webtoonDetail)
+        if let store {
+          WebtoonDetailView(
+            store: store,
+            animation: animation
+          )
+        }
+      }
     }
   }
   

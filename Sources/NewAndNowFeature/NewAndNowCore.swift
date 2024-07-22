@@ -19,7 +19,7 @@ public struct NewAndNowCore {
         .reduce(into: 0, +=)
     }
     
-    public var webtoons: [Webtoon] = []
+    public var webtoons: IdentifiedArrayOf<Webtoon> = []
     public var webtoonRows: IdentifiedArrayOf<WebToonCore.State> = []
     public var selectedWebtoonRow: WebtoonDetail.State?
     public var selectedReleaseStatus: ReleaseStatus = .comingSoon
@@ -77,7 +77,7 @@ public struct NewAndNowCore {
         
       case .fetchResponse(let data):
         let webtoons = data.webtoons
-        state.webtoons = webtoons
+        state.webtoons.append(contentsOf: webtoons)
         state.webtoonRows.append(contentsOf: webtoons.map(\.webtoonRow))
         
         /// ViewState를 Reducer 내부로 가두는걸 선호하지 않지만,
@@ -94,6 +94,7 @@ public struct NewAndNowCore {
         else { return .none }
         switch action {
         case .tapped:
+          state.selectedWebtoonRow = state.webtoons[id: id]?.webtoonDetail
           return .none
           
         case .binding(\.isNotified):
@@ -116,6 +117,11 @@ public struct NewAndNowCore {
         default:
           return .none
         }
+        
+      case .webtoonDetail(let action):
+        print(action)
+        state.selectedWebtoonRow = nil
+        return .none
         
       case .webtoonRows,
           .binding:
@@ -154,6 +160,17 @@ private extension Webtoon {
         colorCode: thumbnailColor,
         episodes: episodes
       )
+    )
+  }
+  
+  var webtoonDetail: WebtoonDetail.State {
+    .init(
+      releaseDate: releaseDate,
+      title: title,
+      thumbnail: thumbnail,
+      ageRating: ageRating,
+      tags: tags,
+      episodes: episodes
     )
   }
 }
