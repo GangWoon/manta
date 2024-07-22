@@ -1,7 +1,7 @@
 import SwiftUI
 
 extension View {
-  func readSize(_ onChange: @escaping (CGSize) -> Void) -> some View {
+  public func readSize(_ onChange: @escaping (CGSize) -> Void) -> some View {
     background {
       GeometryReader { proxy in
         Color.clear
