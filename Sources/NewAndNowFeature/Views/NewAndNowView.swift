@@ -55,6 +55,9 @@ public struct NewAndNowView: View {
       .animation(.easeInOut, value: showingHeader)
       .background { Color.manta.deepGray.ignoresSafeArea() }
       .overlay {
+        /// NOTE: Multiple inserted views 경고가 발생하지만, 뷰에 직접적인 문제는 발생하지 않습니다.
+        /// ZStack 내부에 분기문을 사용하면 해당 경고를 해결할 수 있지만,
+        /// 스크롤 뷰의 위치를 현 시점에서 제어할 수 없기에 나중 작업으로 우선순위를 미루도록 하겠습니다.
         let store = store.scope(state: \.selectedWebtoonRow, action: \.webtoonDetail)
         if let store {
           WebtoonDetailView(
@@ -112,7 +115,7 @@ public struct NewAndNowView: View {
             )
           )
           ForEach(list, id: \.0) { id, store in
-            WebToonRow(store: store)
+            WebToonRow(store: store, animation: animation)
               .padding(.top, 16)
               .id(id)
             /// store.id로 했을 경우 스크롤 되지 않는 이슈 발생

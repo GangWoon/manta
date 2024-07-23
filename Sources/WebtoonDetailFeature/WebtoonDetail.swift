@@ -122,7 +122,7 @@ public struct WebtoonDetailView: View {
   
   private func navigationBar(_ proxy: GeometryProxy) -> some View {
     HStack {
-      Button(action: { store.send(.dismiss) }) {
+      Button(action: { store.send(.dismiss, animation: .hero) }) {
         Image(systemName: "chevron.left")
           .foregroundStyle(.manta.white)
           .padding()
@@ -185,6 +185,7 @@ public struct WebtoonDetailView: View {
       )
       .frame(height: 200)
     }
+    .matchedGeometryEffect(id: store.thumbnail, in: animation)
   }
   
   private func webtoonInfoView(_ proxy: GeometryProxy) -> some View {
@@ -204,11 +205,21 @@ public struct WebtoonDetailView: View {
           .font(.caption)
           .foregroundStyle(.manta.lightGray)
       }
+      .matchedGeometryEffect(
+        id: store.tags,
+        in: animation,
+        properties: .position
+      )
       
       Text(store.title)
         .font(.title)
         .foregroundStyle(.manta.white)
         .padding(.bottom, 16)
+        .matchedGeometryEffect(
+          id: store.title,
+          in: animation,
+          properties: .position
+        )
       
       if let date = store.releaseDate {
         Text("Coming ")

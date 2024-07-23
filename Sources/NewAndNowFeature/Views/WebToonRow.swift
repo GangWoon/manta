@@ -17,12 +17,13 @@ public struct WebToonCore {
     public var summary: String
     public var isNewSeason: Bool?
     public var episodes: EpisodesCore.State
-
+    
     public var isSummaryExpaneded: Bool = false
     public var isNotified: Bool = false
   }
   
   public enum Action: Equatable, Sendable, BindableAction {
+    case tapped
     case episodes(EpisodesCore.Action)
     case binding(BindingAction<State>)
   }
@@ -42,6 +43,9 @@ public struct WebToonCore {
 
 struct WebToonRow: View {
   let store: StoreOf<WebToonCore>
+  @State private var hi: Bool = false
+  
+  var animation: Namespace.ID
   
   var body: some View {
     WithPerceptionTracking {
@@ -49,6 +53,7 @@ struct WebToonRow: View {
         VStack(alignment: .leading) {
           Spacer()
             .frame(height: 16)
+          
           if let date = store.releaseDate {
             releaseDate(date)
           } else {
@@ -60,6 +65,11 @@ struct WebToonRow: View {
           Text(store.title)
             .font(.system(size: 22).bold())
             .foregroundStyle(.white)
+            .matchedGeometryEffect(
+              id: store.title,
+              in: animation,
+              properties: .position
+            )
           
           VStack(alignment: .leading) {
             tagList
@@ -80,6 +90,10 @@ struct WebToonRow: View {
               .scope(state: \.episodes, action: \.episodes)
           )
         }
+      }
+      .onTapGesture {
+        hi.toggle()
+        store.send(.tapped, animation: .hero)
       }
     }
   }
@@ -128,6 +142,11 @@ struct WebToonRow: View {
     .onTapGesture {
       store.send(.binding(.set(\.isSummaryExpaneded, !store.isSummaryExpaneded)))
     }
+    .matchedGeometryEffect(
+      id: store.tags,
+      in: animation,
+      properties: .position
+    )
   }
   
   private var summaryView: some View {
@@ -168,11 +187,9 @@ struct WebToonRow: View {
   private var notifyButton: some View {
     Button(
       action: {
-        store
-          .send(
-            .binding(.set(\.isNotified, !store.isNotified)),
-            animation: .easeInOut
-          )
+        let bindingAction = WebToonCore.Action
+          .binding(.set(\.isNotified, !store.isNotified))
+        store .send(bindingAction, animation: .easeInOut)
       }
     ) {
       HStack {
@@ -221,6 +238,7 @@ struct WebToonRow: View {
     } placeholder: {
       Color(hex: store.thumbnailColor)
     }
+    .matchedGeometryEffect(id: store.thumbnailURL, in: animation)
   }
 }
 
@@ -236,26 +254,35 @@ private let monthFormatter = {
   return formatter
 }()
 
-#Preview {
-  WebToonRow(
-    store: Store(
-      initialState: WebToonCore.State(
-        id: .init(),
-        title: "Choose Your Heroes Carefully",
-        tags: ["BL", "Fantasy", "Adventure"],
-        thumbnailURL: URL(string: "https://github.com/GangWoon/manta/assets/48466830/8d4487b9-a8fc-4612-9444-b5c5dc1b19c7"),
-        thumbnailColor: "#5B7AA1",
-        summary: "Stuck in a game with a lousy hero? Me too!\nMinjoon, a normal office worker, wakes up inside the game he was reviewing for his friend. It's not his fault the trailer was so boring it put him to sleep! Bewildered, Minjoon is tasked with summoning a hero to guide. The hero certainly looks strong, but he seems to be less useful than expected.",
-        isNewSeason: true,
-        episodes: .init(
-          colorCode: "#5B7AA1",
-          episodes: [
-            .init(title: "S1 Episode 1", thumbnail: URL(string: "https://github.com/GangWoon/manta/assets/48466830/5e5081d7-d42d-4cd4-ae16-59d24f1d7456"))
-          ]
-        )
+#if DEBUG
+struct WebtoonRowPreview: View {
+  @Namespace var animation
+  var body: some View {
+    WebToonRow(
+      store: Store(
+        initialState: WebToonCore.State(
+          id: .init(),
+          title: "Choose Your Heroes Carefully",
+          tags: ["BL", "Fantasy", "Adventure"],
+          thumbnailURL: URL(string: "https://github.com/GangWoon/manta/assets/48466830/8d4487b9-a8fc-4612-9444-b5c5dc1b19c7"),
+          thumbnailColor: "#5B7AA1",
+          summary: "Stuck in a game with a lousy hero? Me too!\nMinjoon, a normal office worker, wakes up inside the game he was reviewing for his friend. It's not his fault the trailer was so boring it put him to sleep! Bewildered, Minjoon is tasked with summoning a hero to guide. The hero certainly looks strong, but he seems to be less useful than expected.",
+          isNewSeason: true,
+          episodes: .init(
+            colorCode: "#5B7AA1",
+            episodes: [
+              .init(title: "S1 Episode 1", thumbnail: URL(string: "https://github.com/GangWoon/manta/assets/48466830/5e5081d7-d42d-4cd4-ae16-59d24f1d7456"))
+            ]
+          )
+        ),
+        reducer: WebToonCore.init
       ),
-      reducer: WebToonCore.init
+      animation: animation
     )
-  )
-  .frame(height: 500)
+  }
 }
+#Preview {
+  WebtoonRowPreview()
+    .frame(height: 500)
+}
+#endif
