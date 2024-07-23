@@ -75,50 +75,48 @@ public struct WebtoonDetailView: View {
   }
   
   public var body: some View {
-    WithPerceptionTracking {
-      GeometryReader { proxy in
-        ScrollView {
-          LazyVStack(alignment: .leading, spacing: 0, pinnedViews: .sectionHeaders) {
-            WithPerceptionTracking {
-              thumbnail(proxy)
-                .overlay(alignment: .bottomLeading) {
-                  webtoonInfoView(proxy)
-                    .padding(.horizontal)
-                }
-              Section {
-                ForEach(0..<100) { i in
-                  Text("item \(i)")
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 100)
-                    .padding()
-                    .background { Color.indigo }
-                }
-              } header: {
-                WithPerceptionTracking {
-                  Text("\(store.episodes.count) Episodes")
-                    .font(.subheadline)
-                    .foregroundStyle(.manta.white)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
-                    .background { Color.manta.deepGray }
-                    .offset(y: sectionHeaderOffset)
-                    .readSize { sectionHeaderHeight = $0.height }
-                }
+    GeometryReader { proxy in
+      ScrollView {
+        LazyVStack(alignment: .leading, spacing: 0, pinnedViews: .sectionHeaders) {
+          WithPerceptionTracking {
+            thumbnail(proxy)
+              .overlay(alignment: .bottomLeading) {
+                webtoonInfoView(proxy)
+                  .padding(.horizontal)
+              }
+            Section {
+              ForEach(0..<100) { i in
+                Text("item \(i)")
+                  .frame(maxWidth: .infinity)
+                  .frame(height: 100)
+                  .padding()
+                  .background { Color.indigo }
+              }
+            } header: {
+              WithPerceptionTracking {
+                Text("\(store.episodes.count) Episodes")
+                  .font(.subheadline)
+                  .foregroundStyle(.manta.white)
+                  .frame(maxWidth: .infinity, alignment: .leading)
+                  .padding()
+                  .background { Color.manta.deepGray }
+                  .offset(y: sectionHeaderOffset)
+                  .readSize { sectionHeaderHeight = $0.height }
               }
             }
           }
-          .readScrollOffset(axis: .vertical) { offset in
-            updateSectionHeaderPosition(proxy: proxy, offset: offset)
-            updateNavigationBarOpacity(offset)
-          }
         }
-        .background { Color.manta.deepGray }
-        .overlay(alignment: .topLeading) {
-          navigationBar(proxy)
+        .readScrollOffset(axis: .vertical) { offset in
+          updateSectionHeaderPosition(proxy: proxy, offset: offset)
+          updateNavigationBarOpacity(offset)
         }
-        .scrollIndicators(.hidden)
-        .ignoresSafeArea(.all)
       }
+      .background { Color.manta.deepGray }
+      .overlay(alignment: .topLeading) {
+        navigationBar(proxy)
+      }
+      .scrollIndicators(.hidden)
+      .ignoresSafeArea(.all)
     }
   }
   
@@ -127,16 +125,18 @@ public struct WebtoonDetailView: View {
       Button(action: { store.send(.dismiss) }) {
         Image(systemName: "chevron.left")
           .foregroundStyle(.manta.white)
+          .padding()
       }
       .buttonStyle(.plain)
-      .padding()
+      .contentShape(Rectangle())
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding(.top, proxy.safeAreaInsets.top)
     .background {
-      Color.manta.deepGray.opacity(naviagtionBarOpacity)
+        Color.manta.deepGray
+          .opacity(naviagtionBarOpacity)
+          .animation(.easeInOut, value: naviagtionBarOpacity)
     }
-    .animation(.easeInOut, value: naviagtionBarOpacity)
   }
   
   private func updateNavigationBarOpacity(_ offset: CGFloat) {
