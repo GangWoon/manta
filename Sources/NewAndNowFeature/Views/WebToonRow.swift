@@ -8,6 +8,10 @@ import Shimmer
 public struct WebToonCore {
   @ObservableState
   public struct State: Equatable, Sendable, Identifiable {
+    var releaseStatus: NewAndNowCore.State.ReleaseStatus {
+      releaseDate != nil ? .comingSoon : .newArrivals
+    }
+    
     public var id: UUID
     public var releaseDate: Date?
     public var title: String
@@ -182,36 +186,53 @@ struct WebToonRow: View {
   }
   
   private var notifyButton: some View {
-    Button(
-      action: {
-        let bindingAction = WebToonCore.Action
-          .binding(.set(\.isNotified, !store.isNotified))
-        store .send(bindingAction, animation: .easeInOut)
-      }
-    ) {
-      HStack {
-        Image(systemName: store.isNotified ? "bell.fill" : "bell")
-          .wiggleAnimation(isSelected: store.isNotified)
-        
-        Text(store.isNotified ? "Notification set" : "Notify me")
-      }
-      .font(.system(size: 16).bold())
-      .foregroundStyle(.manta.white)
-      .padding(.vertical, 8)
-      .frame(maxWidth: .infinity)
-      .background {
-        RoundedRectangle(cornerRadius: 8)
-          .fillAndStroke(
-            fill: store.isNotified
-            ? Color.clear
-            : Color(hex: "#D3D3D3").opacity(0.6),
-            stroke: store.isNotified
-            ? Color(hex: "#D3D3D3").opacity(0.6)
-            : Color.clear
-          )
+    Group {
+      let bindingAction = WebToonCore.Action
+        .binding(.set(\.isNotified, !store.isNotified))
+      if store.releaseStatus == .comingSoon {
+        Button(
+          action: { store.send(bindingAction, animation: .easeInOut) }
+        ) {
+          HStack {
+            Image(systemName: store.isNotified ? "bell.fill" : "bell")
+              .wiggleAnimation(isSelected: store.isNotified)
+            
+            Text(store.isNotified ? "Notification set" : "Notify me")
+          }
+          .font(.system(size: 16).bold())
+          .foregroundStyle(.manta.white)
+          .padding(.vertical, 8)
+          .frame(maxWidth: .infinity)
+          .background {
+            RoundedRectangle(cornerRadius: 8)
+              .fillAndStroke(
+                fill: store.isNotified
+                ? Color.clear
+                : Color(hex: "#D3D3D3").opacity(0.6),
+                stroke: store.isNotified
+                ? Color(hex: "#D3D3D3").opacity(0.6)
+                : Color.clear
+              )
+          }
+        }
+        .buttonStyle(ScaleButtonStyle())
+      } else {
+        Button(
+          action: { store.send(.tapped, animation: .hero) }
+        ) {
+          Text("Check it out")
+            .font(.system(size: 16).bold())
+            .foregroundStyle(.manta.white)
+            .padding(.vertical, 8)
+            .frame(maxWidth: .infinity)
+            .background {
+              RoundedRectangle(cornerRadius: 8)
+                .fill(Color(hex: "#D3D3D3").opacity(0.6))
+            }
+        }
+        .buttonStyle(ScaleButtonStyle())
       }
     }
-    .buttonStyle(ScaleButtonStyle())
   }
   
   private var thumbnail: some View {

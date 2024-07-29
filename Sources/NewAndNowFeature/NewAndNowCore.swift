@@ -56,7 +56,7 @@ public struct NewAndNowCore {
   
   public var body: some ReducerOf<Self> {
     BindingReducer()
-
+    
     Reduce<State, Action> { state, action in
       switch action {
       case .prepare:
@@ -90,7 +90,7 @@ public struct NewAndNowCore {
         
       case .webtoonRows(.element(id: let id, action: let action)):
         guard
-          let webToonState = state.webtoonRows[id: id]
+          let webtoonRow = state.webtoonRows[id: id]
         else { return .none }
         switch action {
         case .tapped:
@@ -99,8 +99,8 @@ public struct NewAndNowCore {
           
         case .binding(\.isNotified):
           state.forceShowingHeader = true
-          if webToonState.isNotified {
-            if let item = webToonState.notificationItem {
+          if webtoonRow.isNotified {
+            if let item = webtoonRow.notificationItem {
               state.notificationItems.insertSorted(item)
             }
           } else {
@@ -111,7 +111,7 @@ public struct NewAndNowCore {
           return .run { send in
             /// ScrollView가 정상적으로 동작하지 않아서 강제로 딜레이를 주고 scrollID가 설정되도록 구현했습니다.
             try await Task.sleep(for: .seconds((0.1)))
-            await send(.binding(.set(\.notificationItemScrollID, webToonState.isNotified ? id : nil)))
+            await send(.binding(.set(\.notificationItemScrollID, webtoonRow.isNotified ? id : nil)))
           }
           
         default:
@@ -185,10 +185,6 @@ extension WebToonCore.State {
       )
     }
     return nil
-  }
-  
-  var releaseStatus: NewAndNowCore.State.ReleaseStatus {
-    releaseDate != nil ? .comingSoon : .newArrivals
   }
 }
 
