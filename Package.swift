@@ -20,14 +20,16 @@ let package = Package(
   dependencies: [
     .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", from: "1.11.2"),
     .package(url: "https://github.com/pointfreeco/swift-dependencies.git", from: "1.3.1"),
-    .package(url: "https://github.com/pointfreeco/swift-perception.git", from: "1.3.2")
+    .package(url: "https://github.com/pointfreeco/swift-perception.git", from: "1.3.2"),
+    .package(url: "https://github.com/markiv/SwiftUI-Shimmer.git", from: "1.5.0")
   ],
   targets: [
     .target(
       name: "NewAndNowFeature",
       dependencies: [
-        "ApiClient",
         .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+        .product(name: "Shimmer", package: "swiftui-shimmer"),
+        "ApiClient",
         "WebtoonDetailFeature",
         "SharedModels",
         "ViewHelper"

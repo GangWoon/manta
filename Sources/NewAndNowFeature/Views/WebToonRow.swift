@@ -2,6 +2,7 @@ import ComposableArchitecture
 import ViewHelper
 import ApiClient
 import SwiftUI
+import Shimmer
 
 @Reducer
 public struct WebToonCore {
@@ -43,7 +44,6 @@ public struct WebToonCore {
 
 struct WebToonRow: View {
   let store: StoreOf<WebToonCore>
-  @State private var hi: Bool = false
   
   var animation: Namespace.ID
   
@@ -83,6 +83,7 @@ struct WebToonRow: View {
         .background { dimmingView }
         .background { thumbnail }
         .cornerRadius(10)
+        .onTapGesture { store.send(.tapped, animation: .hero) }
         
         if !store.episodes.isEmpty {
           EpisodesView(
@@ -90,10 +91,6 @@ struct WebToonRow: View {
               .scope(state: \.episodes, action: \.episodes)
           )
         }
-      }
-      .onTapGesture {
-        hi.toggle()
-        store.send(.tapped, animation: .hero)
       }
     }
   }
@@ -237,6 +234,7 @@ struct WebToonRow: View {
         }
     } placeholder: {
       Color(hex: store.thumbnailColor)
+        .shimmering(bandSize: 0.6)
     }
     .matchedGeometryEffect(id: store.thumbnailURL, in: animation)
   }
