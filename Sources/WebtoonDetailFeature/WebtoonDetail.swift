@@ -89,8 +89,7 @@ public struct WebtoonDetail {
     case binding(BindingAction<State>)
   }
   
-  public init() {
-  }
+  public init() { }
   
   public var body: some ReducerOf<Self> {
     BindingReducer()
@@ -135,13 +134,14 @@ public struct WebtoonDetailView: View {
                 )
                 .padding(.horizontal, 16)
               } else {
-                ForEach(0..<100) { i in
-                  Text("item \(i)")
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 100)
-                    .padding()
-                    .background { Color.indigo }
+                ForEach(store.episodes) { episode in
+                  WebtoonDetailRow(episode: episode)
+                    .padding(.horizontal)
+                    .padding(.vertical, 10)
                 }
+                
+                Spacer()
+                  .frame(height: 40)
               }
             } header: {
               if !store.episodes.isEmpty {
@@ -150,10 +150,10 @@ public struct WebtoonDetailView: View {
                     .font(.subheadline)
                     .foregroundStyle(.manta.white)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
+                    .padding(.horizontal)
+                    .padding(.vertical, 4)
                     .background { Color.manta.deepGray }
                     .offset(y: sectionHeaderOffset)
-                    .readSize { sectionHeaderHeight = $0.height }
                 }
               }
             }
@@ -184,6 +184,7 @@ public struct WebtoonDetailView: View {
       .contentShape(Rectangle())
     }
     .frame(maxWidth: .infinity, alignment: .leading)
+    .readSize { sectionHeaderHeight = $0.height }
     .padding(.top, proxy.safeAreaInsets.top)
     .background {
       Color.manta.deepGray
@@ -204,12 +205,11 @@ public struct WebtoonDetailView: View {
   }
   
   private func updateSectionHeaderPosition(proxy: GeometryProxy, offset: CGFloat) {
-    let headerResistance = 10.0
     let baseOffset = proxy.safeAreaInsets.top + sectionHeaderHeight
     let thumbnailHeight = proxy.size.width * 0.8 + 200
-    let thresholdOffset = thumbnailHeight - baseOffset + headerResistance
+    let thresholdOffset = thumbnailHeight - baseOffset
     if thresholdOffset < offset {
-      sectionHeaderOffset = min(baseOffset - headerResistance, offset - thresholdOffset)
+      sectionHeaderOffset = min(baseOffset, offset - thresholdOffset)
     } else {
       sectionHeaderOffset = 0
     }
@@ -225,6 +225,7 @@ public struct WebtoonDetailView: View {
           .clipped()
       } placeholder: {
         Color.clear
+          .frame(height: proxy.size.width)
       }
       .frame(height: proxy.size.width)
       
@@ -353,7 +354,14 @@ struct WebtoonDetailTest: View {
           ageRating: "17+",
           tags: ["Fantasy", "Romance", "Coming of age", "Free Pass", "Fight the system", "Mythical", "Reincarnation", "Survival", "Girl crush", "Has it rough", "Knight", "Nice guy", "Soulmate", "Kingdom", "Emotional", "Inspirational", "Magical", "Exclusive"],
           summary: "A turn of fate... by your own hand.\nAlicia Melfont vows to restore the former glory of her house after the Dark God's agent massacres her family. But when a mysterious book reveals that she's only a supporting character meant to die for the true protagonist of the story, Alicia decides she won't let some silly book determine her fate.",
-          episodes: [],
+          episodes: [
+            .init(
+              title: "S1 Episode 1",
+              thumbnail: URL(string: "https://github.com/GangWoon/manta/assets/48466830/c6739595-4236-4036-b06a-d15cabb795ce"),
+              releaseDate: .now,
+              accessType: "Free"
+            )
+          ],
           creators: .init(
             production: "Team LYCHEE",
             illustration: "Lee Mi Nu",
