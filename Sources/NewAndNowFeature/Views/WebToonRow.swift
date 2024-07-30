@@ -187,11 +187,13 @@ struct WebToonRow: View {
   
   private var notifyButton: some View {
     Group {
-      let bindingAction = WebToonCore.Action
-        .binding(.set(\.isNotified, !store.isNotified))
       if store.releaseStatus == .comingSoon {
         Button(
-          action: { store.send(bindingAction, animation: .easeInOut) }
+          action: {
+            let bindingAction = WebToonCore.Action
+              .binding(.set(\.isNotified, !store.isNotified))
+            store.send(bindingAction, animation: .easeInOut)
+          }
         ) {
           HStack {
             Image(systemName: store.isNotified ? "bell.fill" : "bell")

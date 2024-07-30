@@ -7,10 +7,10 @@ import SwiftUI
 public struct WebtoonDetail {
   @ObservableState
   public struct State: Equatable {
-    public let buttons: [ButtonType] = ButtonType.allCases
-    public enum ButtonType: Equatable, Sendable, CaseIterable {
+    public var buttons: [ButtonType]
+    public enum ButtonType: Hashable, Sendable {
       case save
-      case notification
+      case notification(Bool)
       case rate
       case download
       case highlights
@@ -20,11 +20,22 @@ public struct WebtoonDetail {
     public var thumbnail: URL?
     public var ageRating: String
     public var tags: [String]
+    public var summary: String
     public var episodes: [Webtoon.Episode]
+    public var creators: Webtoon.Creators
+    public var isNotified: Bool
+    public var isTagListExpanded: Bool
     
-    public var displayedTag: String {
+    var primaryTag: String {
       guard tags.count >= 2 else { return "" }
       return tags.prefix(2).joined(separator: " · ")
+    }
+    var visibleTagList: [String] {
+      if isTagListExpanded {
+        tags
+      } else {
+        Array(tags.prefix(5))
+      }
     }
     
     public init(
@@ -33,25 +44,48 @@ public struct WebtoonDetail {
       thumbnail: URL?,
       ageRating: String,
       tags: [String],
-      episodes: [Webtoon.Episode]
+      summary: String,
+      episodes: [Webtoon.Episode],
+      creators: Webtoon.Creators,
+      isNotified: Bool,
+      isTagListExpanded: Bool = false
     ) {
       self.releaseDate = releaseDate
       self.title = title
       self.thumbnail = thumbnail
       self.ageRating = ageRating
       self.tags = tags
+      self.summary = summary
       self.episodes = episodes
+      self.creators = creators
+      self.isNotified = isNotified
+      self.isTagListExpanded = isTagListExpanded
+      self.buttons = [
+        .save,
+        .notification(isNotified),
+        .rate
+      ]
+      if !episodes.isEmpty {
+        self.buttons.append(
+          contentsOf: [
+            .download,
+            .highlights
+          ]
+        )
+      }
     }
   }
   
-  public enum Action: Equatable, Sendable {
+  public enum Action: Equatable, Sendable, BindableAction {
     case dismiss
+    case binding(BindingAction<State>)
   }
   
   public init() {
   }
   
   public var body: some ReducerOf<Self> {
+    BindingReducer()
     Reduce { state, action in
         .none
     }
@@ -85,23 +119,75 @@ public struct WebtoonDetailView: View {
                   .padding(.horizontal)
               }
             Section {
-              ForEach(0..<100) { i in
-                Text("item \(i)")
-                  .frame(maxWidth: .infinity)
-                  .frame(height: 100)
-                  .padding()
-                  .background { Color.indigo }
+              if store.episodes.isEmpty {
+                VStack(alignment: .leading, spacing: 12) {
+                  Text("Summary")
+                    .font(.subheadline.bold())
+                  
+                  Text(store.summary)
+                    .foregroundStyle(.manta.lightGray)
+                  
+                  HStack {
+                    ageBadge
+                    Text("This series is suitable for ages \(store.ageRating)")
+                  }
+                  
+                  ChipLayout(horizontalSpacing: 8, verticalSpacing: 8) {
+                    ForEach(store.visibleTagList, id: \.self) { tag in
+                      Text(tag)
+                        .padding(3)
+                        .background{
+                          RoundedRectangle(cornerRadius: 4)
+                            .fill(Color(hex: "#28292d"))
+                        }
+                    }
+                    
+                    if !store.isTagListExpanded {
+                      Button(action: {
+                        store.send(.binding(.set(\.isTagListExpanded, true)), animation: .easeInOut)
+                      }) {
+                        Text("+ More")
+                          .padding(3)
+                          .padding(.horizontal, 4)
+                          .background {
+                            RoundedRectangle(cornerRadius: 4)
+                              .stroke(Color(hex: "#28292d"), lineWidth: 2)
+                          }
+                      }
+                    }
+                  }
+                  .font(.caption2)
+                  .padding(.bottom, 32)
+                  
+                  CreatorsInfoView(creators: store.creators)
+                  
+                  Spacer()
+                    .frame(height: 60)
+                }
+                .font(.footnote)
+                .padding(.horizontal, 16)
+                .foregroundStyle(.manta.white)
+              } else {
+                ForEach(0..<100) { i in
+                  Text("item \(i)")
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 100)
+                    .padding()
+                    .background { Color.indigo }
+                }
               }
             } header: {
-              WithPerceptionTracking {
-                Text("\(store.episodes.count) Episodes")
-                  .font(.subheadline)
-                  .foregroundStyle(.manta.white)
-                  .frame(maxWidth: .infinity, alignment: .leading)
-                  .padding()
-                  .background { Color.manta.deepGray }
-                  .offset(y: sectionHeaderOffset)
-                  .readSize { sectionHeaderHeight = $0.height }
+              if !store.episodes.isEmpty {
+                WithPerceptionTracking {
+                  Text("\(store.episodes.count) Episodes")
+                    .font(.subheadline)
+                    .foregroundStyle(.manta.white)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding()
+                    .background { Color.manta.deepGray }
+                    .offset(y: sectionHeaderOffset)
+                    .readSize { sectionHeaderHeight = $0.height }
+                }
               }
             }
           }
@@ -133,9 +219,9 @@ public struct WebtoonDetailView: View {
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding(.top, proxy.safeAreaInsets.top)
     .background {
-        Color.manta.deepGray
-          .opacity(naviagtionBarOpacity)
-          .animation(.easeInOut, value: naviagtionBarOpacity)
+      Color.manta.deepGray
+        .opacity(naviagtionBarOpacity)
+        .animation(.easeInOut, value: naviagtionBarOpacity)
     }
   }
   
@@ -188,20 +274,24 @@ public struct WebtoonDetailView: View {
     .matchedGeometryEffect(id: store.thumbnail, in: animation)
   }
   
+  private var ageBadge: some View {
+    Text(store.ageRating)
+      .font(.caption2).bold()
+      .foregroundStyle(.manta.white)
+      .padding(.vertical, 1)
+      .padding(.horizontal, 2)
+      .background {
+        RoundedRectangle(cornerRadius: 4)
+          .fill(.gray)
+      }
+  }
+  
   private func webtoonInfoView(_ proxy: GeometryProxy) -> some View {
     VStack(alignment: .leading, spacing: 0) {
       HStack {
-        Text(store.ageRating)
-          .font(.caption).bold()
-          .foregroundStyle(.manta.white)
-          .padding(.vertical, 2)
-          .padding(.horizontal, 2)
-          .background {
-            RoundedRectangle(cornerRadius: 4)
-              .fill(.gray)
-          }
+        ageBadge
         
-        Text(store.displayedTag)
+        Text(store.primaryTag)
           .font(.caption)
           .foregroundStyle(.manta.lightGray)
       }
@@ -222,9 +312,10 @@ public struct WebtoonDetailView: View {
         )
       
       if let date = store.releaseDate {
-        Text("Coming ")
+        Text("Coming " + dateFormatter.string(from: date))
           .foregroundStyle(.manta.lightGray)
           .font(.caption)
+          .padding(.bottom, 16)
       }
       
       HStack(spacing: 0) {
@@ -232,10 +323,10 @@ public struct WebtoonDetailView: View {
           Button(action: { }) {
             VStack(spacing: 4) {
               Image(systemName: button.imageName)
-                .font(.title2)
+                .font(.title3)
               
               Text(button.title)
-                .font(.footnote)
+                .font(.caption2)
             }
           }
           .frame(width: (proxy.size.width - 32) / 5)
@@ -251,13 +342,20 @@ public struct WebtoonDetailView: View {
   }
 }
 
+private let dateFormatter: DateFormatter = {
+  let formatter = DateFormatter()
+  formatter.dateFormat = "EEE, MMM dd"
+  
+  return formatter
+}()
+
 private extension WebtoonDetail.State.ButtonType {
   var imageName: String {
     switch self {
     case .save:
       return "plus"
-    case .notification:
-      return "bell"
+    case .notification(let isNotified):
+      return isNotified ? "bell.fill" : "bell"
     case .rate:
       return "hand.thumbsup"
     case .download:
@@ -295,8 +393,16 @@ struct WebtoonDetailTest: View {
           title: "The Accidental Heiress",
           thumbnail: URL(string: "https://github.com/GangWoon/manta/assets/48466830/b6cb2767-ed85-4f5b-9de4-55d64b82c62d"),
           ageRating: "17+",
-          tags: ["Romance", "Fantasy"],
-          episodes: []
+          tags: ["Fantasy", "Romance", "Coming of age", "Free Pass", "Fight the system", "Mythical", "Reincarnation", "Survival", "Girl crush", "Has it rough", "Knight", "Nice guy", "Soulmate", "Kingdom", "Emotional", "Inspirational", "Magical", "Exclusive"],
+          summary: "A turn of fate... by your own hand.\nAlicia Melfont vows to restore the former glory of her house after the Dark God's agent massacres her family. But when a mysterious book reveals that she's only a supporting character meant to die for the true protagonist of the story, Alicia decides she won't let some silly book determine her fate.",
+          episodes: [],
+          creators: .init(
+            production: "Team LYCHEE",
+            illustration: "Lee Mi Nu",
+            writer: "Lee Mi Nu",
+            localization: "Manta Comics"
+          ),
+          isNotified: true
         ),
         reducer: WebtoonDetail.init
       ),

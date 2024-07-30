@@ -94,10 +94,12 @@ public struct NewAndNowCore {
         else { return .none }
         switch action {
         case .tapped:
-          state.selectedWebtoonRow = state.webtoons[id: id]?.webtoonDetail
+          state.selectedWebtoonRow = state.webtoons[id: id]?
+            .webtoonDetail(isNotified: webtoonRow.isNotified)
           return .none
           
         case .binding(\.isNotified):
+          guard webtoonRow.releaseStatus == .comingSoon else { return .none }
           state.forceShowingHeader = true
           if webtoonRow.isNotified {
             if let item = webtoonRow.notificationItem {
@@ -119,7 +121,6 @@ public struct NewAndNowCore {
         }
         
       case .webtoonDetail(let action):
-        print(action)
         state.selectedWebtoonRow = nil
         return .none
         
@@ -163,14 +164,17 @@ private extension Webtoon {
     )
   }
   
-  var webtoonDetail: WebtoonDetail.State {
+  func webtoonDetail(isNotified: Bool) -> WebtoonDetail.State {
     .init(
       releaseDate: releaseDate,
       title: title,
       thumbnail: thumbnail,
       ageRating: ageRating,
       tags: tags,
-      episodes: episodes
+      summary: summary,
+      episodes: episodes,
+      creators: creators,
+      isNotified: isNotified
     )
   }
 }
