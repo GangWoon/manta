@@ -18,6 +18,20 @@ public struct Webtoon: Identifiable, Sendable, Equatable {
     public var writer: String?
     public var originalStory: String?
     public var localization: String?
+    
+    public init(
+      production: String? = nil,
+      illustration: String? = nil,
+      writer: String? = nil,
+      originalStory: String? = nil,
+      localization: String? = nil
+    ) {
+      self.production = production
+      self.illustration = illustration
+      self.writer = writer
+      self.originalStory = originalStory
+      self.localization = localization
+    }
   }
   
   public var episodes: [Episode]
