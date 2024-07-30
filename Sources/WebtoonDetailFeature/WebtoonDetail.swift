@@ -37,6 +37,14 @@ public struct WebtoonDetail {
         Array(tags.prefix(5))
       }
     }
+    var webtoonInfoState: WebtoonInfoView.State {
+      .init(
+        summary: summary,
+        ageRating: ageRating,
+        tags: tags,
+        creators: creators
+      )
+    }
     
     public init(
       releaseDate: Date?,
@@ -190,6 +198,8 @@ public struct WebtoonDetailView: View {
       naviagtionBarOpacity = min(max(offset / threshold, 0.0), 1)
     } else if offset < 0, naviagtionBarOpacity != 0 {
       naviagtionBarOpacity = 0
+    } else if offset > threshold, naviagtionBarOpacity != 1 {
+      naviagtionBarOpacity = 1
     }
   }
   
@@ -233,22 +243,11 @@ public struct WebtoonDetailView: View {
     .matchedGeometryEffect(id: store.thumbnail, in: animation)
   }
   
-  private var ageBadge: some View {
-    Text(store.ageRating)
-      .font(.caption2).bold()
-      .foregroundStyle(.manta.white)
-      .padding(.vertical, 1)
-      .padding(.horizontal, 2)
-      .background {
-        RoundedRectangle(cornerRadius: 4)
-          .fill(.gray)
-      }
-  }
-  
-  private func webtoonInfoView(_ proxy: GeometryProxy) -> some View {
+  private func webtoonTitle(_ proxy: GeometryProxy) -> some View {
     VStack(alignment: .leading, spacing: 0) {
       HStack {
-        ageBadge
+        Text(store.ageRating)
+          .badge()
         
         Text(store.primaryTag)
           .font(.caption)
