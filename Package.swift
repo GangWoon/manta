@@ -39,6 +39,7 @@ let package = Package(
       name: "WebtoonDetailFeature",
       dependencies: [
         .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+        .product(name: "Shimmer", package: "swiftui-shimmer"),
         "SharedModels",
         "ViewHelper"
       ]
