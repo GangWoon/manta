@@ -97,7 +97,7 @@ public struct WebtoonDetailView: View {
   @State private var sectionHeaderOffset: CGFloat = .zero
   @State private var sectionHeaderHeight: CGFloat = .zero
   
-  let store: StoreOf<WebtoonDetail>
+  @Perception.Bindable var store: StoreOf<WebtoonDetail>
   let animation: Namespace.ID
   
   public init(
@@ -115,58 +115,17 @@ public struct WebtoonDetailView: View {
           WithPerceptionTracking {
             thumbnail(proxy)
               .overlay(alignment: .bottomLeading) {
-                webtoonInfoView(proxy)
+                webtoonTitle(proxy)
                   .padding(.horizontal)
               }
+            
             Section {
               if store.episodes.isEmpty {
-                VStack(alignment: .leading, spacing: 12) {
-                  Text("Summary")
-                    .font(.subheadline.bold())
-                  
-                  Text(store.summary)
-                    .foregroundStyle(.manta.lightGray)
-                  
-                  HStack {
-                    ageBadge
-                    Text("This series is suitable for ages \(store.ageRating)")
-                  }
-                  
-                  ChipLayout(horizontalSpacing: 8, verticalSpacing: 8) {
-                    ForEach(store.visibleTagList, id: \.self) { tag in
-                      Text(tag)
-                        .padding(3)
-                        .background{
-                          RoundedRectangle(cornerRadius: 4)
-                            .fill(Color(hex: "#28292d"))
-                        }
-                    }
-                    
-                    if !store.isTagListExpanded {
-                      Button(action: {
-                        store.send(.binding(.set(\.isTagListExpanded, true)), animation: .easeInOut)
-                      }) {
-                        Text("+ More")
-                          .padding(3)
-                          .padding(.horizontal, 4)
-                          .background {
-                            RoundedRectangle(cornerRadius: 4)
-                              .stroke(Color(hex: "#28292d"), lineWidth: 2)
-                          }
-                      }
-                    }
-                  }
-                  .font(.caption2)
-                  .padding(.bottom, 32)
-                  
-                  CreatorsInfoView(creators: store.creators)
-                  
-                  Spacer()
-                    .frame(height: 60)
-                }
-                .font(.footnote)
+                WebtoonInfoView(
+                  isExpanded: $store.isTagListExpanded,
+                  state: store.webtoonInfoState
+                )
                 .padding(.horizontal, 16)
-                .foregroundStyle(.manta.white)
               } else {
                 ForEach(0..<100) { i in
                   Text("item \(i)")
