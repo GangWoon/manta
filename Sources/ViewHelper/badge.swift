@@ -15,7 +15,7 @@ struct BadgeStyle: ViewModifier {
 }
 
 extension View {
-  func badge() -> some View {
+  public func badge() -> some View {
     modifier(BadgeStyle())
   }
 }
