@@ -102,7 +102,7 @@ public struct WebtoonDetail {
 public struct WebtoonDetailView: View {
   @State private var naviagtionBarOpacity: CGFloat = .zero
   @State private var sectionHeaderOffset: CGFloat = .zero
-  @State private var sectionHeaderHeight: CGFloat = .zero
+  @State private var navigationBarHeight: CGFloat = .zero
   
   @Perception.Bindable var store: StoreOf<WebtoonDetail>
   let animation: Namespace.ID
@@ -118,7 +118,11 @@ public struct WebtoonDetailView: View {
   public var body: some View {
     GeometryReader { proxy in
       ScrollView {
-        LazyVStack(alignment: .leading, spacing: 0, pinnedViews: .sectionHeaders) {
+        LazyVStack(
+          alignment: .leading,
+          spacing: 0,
+          pinnedViews: .sectionHeaders
+        ) {
           WithPerceptionTracking {
             thumbnail(proxy)
               .overlay(alignment: .bottomLeading) {
@@ -132,11 +136,9 @@ public struct WebtoonDetailView: View {
                   isExpanded: $store.isTagListExpanded,
                   state: store.webtoonInfoState
                 )
-                .padding(.horizontal, 16)
               } else {
                 ForEach(store.episodes) { episode in
                   WebtoonDetailRow(episode: episode)
-                    .padding(.horizontal)
                     .padding(.vertical, 10)
                 }
                 
@@ -145,18 +147,10 @@ public struct WebtoonDetailView: View {
               }
             } header: {
               if !store.episodes.isEmpty {
-                WithPerceptionTracking {
-                  Text("\(store.episodes.count) Episodes")
-                    .font(.subheadline)
-                    .foregroundStyle(.manta.white)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
-                    .padding(.vertical, 4)
-                    .background { Color.manta.deepGray }
-                    .offset(y: sectionHeaderOffset)
-                }
+                header
               }
             }
+            .padding(.horizontal)
           }
         }
         .readScrollOffset(axis: .vertical) { offset in
@@ -184,7 +178,7 @@ public struct WebtoonDetailView: View {
       .contentShape(Rectangle())
     }
     .frame(maxWidth: .infinity, alignment: .leading)
-    .readSize { sectionHeaderHeight = $0.height }
+    .readSize { navigationBarHeight = $0.height }
     .padding(.top, proxy.safeAreaInsets.top)
     .background {
       Color.manta.deepGray
@@ -205,8 +199,9 @@ public struct WebtoonDetailView: View {
   }
   
   private func updateSectionHeaderPosition(proxy: GeometryProxy, offset: CGFloat) {
-    let baseOffset = proxy.safeAreaInsets.top + sectionHeaderHeight
-    let thumbnailHeight = proxy.size.width * 0.8 + 200
+    let baseOffset = proxy.safeAreaInsets.top + navigationBarHeight
+    let webtoonTitleHeight: CGFloat = 200
+    let thumbnailHeight = proxy.size.width * 0.8 + webtoonTitleHeight
     let thresholdOffset = thumbnailHeight - baseOffset
     if thresholdOffset < offset {
       sectionHeaderOffset = min(baseOffset, offset - thresholdOffset)
@@ -297,6 +292,18 @@ public struct WebtoonDetailView: View {
       Color.manta.lightGray
         .frame(height: 1)
         .padding(.bottom, 16)
+    }
+  }
+  
+  private var header: some View {
+    WithPerceptionTracking {
+      Text("\(store.episodes.count) Episodes")
+        .font(.subheadline)
+        .foregroundStyle(.manta.white)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, 4)
+        .background { Color.manta.deepGray }
+        .offset(y: sectionHeaderOffset)
     }
   }
 }

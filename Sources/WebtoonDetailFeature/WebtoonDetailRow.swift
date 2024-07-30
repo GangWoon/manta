@@ -76,7 +76,7 @@ extension View {
 }
 
 #if DEBUG
-@available(iOS 18.0, *)
+@available(iOS 17.0, *)
 #Preview {
   WebtoonDetailRow(
     episode: .init(

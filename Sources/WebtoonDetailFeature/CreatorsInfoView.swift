@@ -56,6 +56,7 @@ extension Webtoon.Creators {
 }
 
 #if DEBUG
+@available(iOS 17.0, *)
 #Preview {
   CreatorsInfoView(
     creators: .init(
