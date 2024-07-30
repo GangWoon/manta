@@ -3,6 +3,7 @@ import SharedModels
 import ViewHelper
 import SwiftUI
 
+//TODO: - Remove Reducer
 @Reducer
 public struct EpisodesCore {
   @ObservableState
@@ -126,6 +127,7 @@ struct EpisodesView: View {
   }
 }
 
+#if DEBUG
 #Preview {
   EpisodesView(
     store: Store(
@@ -134,7 +136,9 @@ struct EpisodesView: View {
         episodes: [
           .init(
             title: "S1 Episode 1",
-            thumbnail: URL(string: "https://github.com/GangWoon/manta/assets/48466830/c6739595-4236-4036-b06a-d15cabb795ce")
+            thumbnail: URL(string: "https://github.com/GangWoon/manta/assets/48466830/c6739595-4236-4036-b06a-d15cabb795ce"),
+            releaseDate: .now,
+            accessType: "Free"
           )
         ]
       ),
@@ -142,4 +146,4 @@ struct EpisodesView: View {
     )
   )
 }
-
+#endif

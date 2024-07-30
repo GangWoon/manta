@@ -292,7 +292,12 @@ struct WebtoonRowPreview: View {
           episodes: .init(
             colorCode: "#5B7AA1",
             episodes: [
-              .init(title: "S1 Episode 1", thumbnail: URL(string: "https://github.com/GangWoon/manta/assets/48466830/5e5081d7-d42d-4cd4-ae16-59d24f1d7456"))
+              .init(
+                title: "S1 Episode 1",
+                thumbnail: URL(string: "https://github.com/GangWoon/manta/assets/48466830/5e5081d7-d42d-4cd4-ae16-59d24f1d7456"),
+                releaseDate: .now,
+                accessType: "Free"
+              )
             ]
           )
         ),

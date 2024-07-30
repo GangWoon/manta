@@ -34,39 +34,57 @@
       "episodes": [
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/f849ddcd-bff5-4a11-94b0-141a6f6ee220",
-          "title": "Prologue"
+          "title": "Prologue",
+          "releaseDate": "2023-09-08T00:00:00Z",
+          "accessType": "FREE"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/d4f52785-afbc-4143-b98a-17611934c4d9",
-          "title": "S1 Episode 1"
+          "title": "S1 Episode 1",
+          "releaseDate": "2023-09-08T00:00:00Z",
+          "accessType": "FREE"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/aa1a4782-d006-41af-867b-8e4278b49806",
-          "title": "S1 Episode 2"
+          "title": "S1 Episode 2",
+          "releaseDate": "2023-09-08T00:00:00Z",
+          "accessType": "FREE"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/0df3ce42-fac7-463b-95f4-f9597d3ac17c",
-          "title": "S1 Episode 3"
+          "title": "S1 Episode 3",
+          "releaseDate": "2023-09-08T00:00:00Z",
+          "accessType": "Unlimted"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/6a8d950c-e2c1-4e39-838f-ea06b94173fb",
-          "title": "S1 Episode 4"
+          "title": "S1 Episode 4",
+          "releaseDate": "2023-09-08T00:00:00Z",
+          "accessType": "Unlimted"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/b4e176e8-d7fd-4ee8-8950-239e0bdb56a1",
-          "title": "S1 Episode 5"
+          "title": "S1 Episode 5",
+          "releaseDate": "2023-09-08T00:00:00Z",
+          "accessType": "Unlimted"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/97ada070-3b6e-4ed8-aa12-f42810417d4b",
-          "title": "S1 Episode 6"
+          "title": "S1 Episode 6",
+          "releaseDate": "2023-09-16T00:00:00Z",
+          "accessType": "Unlimted"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/f3fe6aa2-8325-44af-86e4-367ab8225ec1",
-          "title": "S1 Episode 7"
+          "title": "S1 Episode 7",
+          "releaseDate": "2023-09-16T00:00:00Z",
+          "accessType": "Unlimted"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/63adbaa0-3068-4c38-a863-c69337b15488",
-          "title": "S1 Episode 8"
+          "title": "S1 Episode 8",
+          "releaseDate": "2023-09-16T00:00:00Z",
+          "accessType": "Unlimted"
         }
       ]
     },
@@ -105,39 +123,57 @@
       "episodes": [
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/c192e0e0-ed0c-4f6c-bbe2-d396ba068f0c",
-          "title": "S1 Prologue"
+          "title": "S1 Prologue",
+          "releaseDate": "2023-09-08T00:00:00Z",
+          "accessType": "FREE"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/5f61b091-b13d-4527-b9ea-650b6e1987eb",
-          "title": "S1 Episode 1"
+          "title": "S1 Episode 1",
+          "releaseDate": "2023-09-08T00:00:00Z",
+          "accessType": "FREE"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/bf6ed144-6a08-4aeb-81a1-09618ac607af",
-          "title": "S1 Episode 2"
+          "title": "S1 Episode 2",
+          "releaseDate": "2023-09-08T00:00:00Z",
+          "accessType": "FREE"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/af89fd27-038a-4117-b891-c39595acfd43",
-          "title": "S1 Episode 3"
+          "title": "S1 Episode 3",
+          "releaseDate": "2023-09-16T00:00:00Z",
+          "accessType": "Unlimted"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/3d772926-686a-4233-a921-5000c533bf04",
-          "title": "S1 Episode 4"
+          "title": "S1 Episode 4",
+          "releaseDate": "2023-09-16T00:00:00Z",
+          "accessType": "Unlimted"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/d801210b-5090-4a0a-89b2-f4756fd0d360",
-          "title": "S1 Episode 5"
+          "title": "S1 Episode 5",
+          "releaseDate": "2023-09-16T00:00:00Z",
+          "accessType": "Unlimted"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/186dca1d-04e8-4c2d-a296-6208a32c15b9",
-          "title": "S1 Episode 6"
+          "title": "S1 Episode 6",
+          "releaseDate": "2023-09-16T00:00:00Z",
+          "accessType": "Unlimted"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/6384d7bc-205c-4e99-8f77-8fffa4ae2ac6",
-          "title": "S1 Episode 7"
+          "title": "S1 Episode 7",
+          "releaseDate": "2023-09-16T00:00:00Z",
+          "accessType": "Unlimted"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/fe0e0db6-51b5-4fbf-b603-f15a812f6efe",
-          "title": "S1 Episode 8"
+          "title": "S1 Episode 8",
+          "releaseDate": "2023-09-16T00:00:00Z",
+          "accessType": "Unlimted"
         }
       ]
     },
@@ -175,39 +211,57 @@
       "episodes": [
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/5e5081d7-d42d-4cd4-ae16-59d24f1d7456",
-          "title": "S1 Episode 1"
+          "title": "S1 Episode 1",
+          "releaseDate": "2023-09-08T00:00:00Z",
+          "accessType": "FREE"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/c6739595-4236-4036-b06a-d15cabb795ce",
-          "title": "S1 Episode 2"
+          "title": "S1 Episode 2",
+          "releaseDate": "2024-03-08T00:00:00Z",
+          "accessType": "FREE"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/f5251d67-6411-4676-b788-ed354dbd5a0b",
-          "title": "S1 Episode 3"
+          "title": "S1 Episode 3",
+          "releaseDate": "2024-03-08T00:00:00Z",
+          "accessType": "FREE"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/8f210ef6-06ea-4c8e-a09e-773b14ae755c",
-          "title": "S1 Episode 4"
+          "title": "S1 Episode 4",
+          "releaseDate": "2024-03-08T00:00:00Z",
+          "accessType": "FREE"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/6cbb997f-32b1-4090-b848-f68a8e2d905b",
-          "title": "S1 Episode 5"
+          "title": "S1 Episode 5",
+          "releaseDate": "2024-03-08T00:00:00Z",
+          "accessType": "Unlimted"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/b7514ab9-c67b-4529-9051-612758ddc98b",
-          "title": "S1 Episode 6"
+          "title": "S1 Episode 6",
+          "releaseDate": "2024-03-13T00:00:00Z",
+          "accessType": "Unlimted"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/8e3c2eb7-c05c-4d74-be6e-5e753e0c900a",
-          "title": "S1 Episode 7"
+          "title": "S1 Episode 7",
+          "releaseDate": "2024-03-13T00:00:00Z",
+          "accessType": "Unlimted"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/e6614fa9-3050-4623-84f9-49c88d4bdb64",
-          "title": "S1 Episode 8"
+          "title": "S1 Episode 8",
+          "releaseDate": "2024-03-13T00:00:00Z",
+          "accessType": "Unlimted"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/e73b7f47-d1b4-4431-b79a-03f39720c52b",
-          "title": "S1 Episode 9"
+          "title": "S1 Episode 9",
+          "releaseDate": "2024-03-13T00:00:00Z",
+          "accessType": "Unlimted"
         }
       ]
     },
@@ -257,23 +311,33 @@
       "episodes": [
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/a107b3be-b6e6-406d-91e4-4dba3e21a2e1",
-          "title": "S1 Episode 1"
+          "title": "S1 Episode 1",
+          "releaseDate": "2023-12-08T00:00:00Z",
+          "accessType": "FREE"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/03a67297-0b2e-49cd-884d-6e52bc8bf9e7",
-          "title": "S1 Episode 2"
+          "title": "S1 Episode 2",
+          "releaseDate": "2023-12-08T00:00:00Z",
+          "accessType": "FREE"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/74d8f94a-6995-4b0a-a3ba-a0cb6f0800ff",
-          "title": "S1 Episode 3"
+          "title": "S1 Episode 3",
+          "releaseDate": "2023-12-20T00:00:00Z",
+          "accessType": "Unlimted"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/e23e25eb-e337-4f90-9006-5a7af0c9fd1e",
-          "title": "S1 Episode 4"
+          "title": "S1 Episode 4",
+          "releaseDate": "2023-12-20T00:00:00Z",
+          "accessType": "Unlimted"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/5f54a64d-8d08-43c8-8815-871ba6c04ee4",
-          "title": "S1 Episode 5"
+          "title": "S1 Episode 5",
+          "releaseDate": "2023-12-20T00:00:00Z",
+          "accessType": "Unlimted"
         }
       ]
     },
@@ -309,27 +373,39 @@
       "episodes": [
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/fd193e06-5f12-45fa-b7ec-d54c49673f50",
-          "title": "Episode 1"
+          "title": "Episode 1",
+          "releaseDate": "2023-12-08T00:00:00Z",
+          "accessType": "FREE"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/d45d4331-8a7b-442f-a259-72a14424038b",
-          "title": "Episode 2"
+          "title": "Episode 2",
+          "releaseDate": "2023-12-08T00:00:00Z",
+          "accessType": "FREE"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/85185682-416e-4b2c-a98d-681d5874a12c",
-          "title": "Episode 3"
+          "title": "Episode 3",
+          "releaseDate": "2023-12-20T00:00:00Z",
+          "accessType": "Unlimted"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/79b15f46-3363-443e-8785-f50b6763a43f",
-          "title": "Episode 4"
+          "title": "Episode 4",
+          "releaseDate": "2023-12-20T00:00:00Z",
+          "accessType": "Unlimted"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/c0577cee-5263-47ef-a3f9-1a0c2037c2ef",
-          "title": "Episode 5"
+          "title": "Episode 5",
+          "releaseDate": "2023-12-20T00:00:00Z",
+          "accessType": "Unlimted"
         },
         {
           "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/2928f9e8-9ae6-42b0-b341-0f235eacf755",
-          "title": "Episode 6"
+          "title": "Episode 6",
+          "releaseDate": "2023-12-20T00:00:00Z",
+          "accessType": "Unlimted"
         }
       ]
     },

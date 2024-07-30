@@ -39,9 +39,18 @@ public struct Webtoon: Identifiable, Sendable, Equatable {
     public var id: String { title }
     public var title: String
     public var thumbnail: URL?
-    public init(title: String, thumbnail: URL? = nil) {
+    public var releaseDate: Date
+    public var accessType: String
+    public init(
+      title: String,
+      thumbnail: URL? = nil,
+      releaseDate: Date,
+      accessType: String
+    ) {
       self.title = title
       self.thumbnail = thumbnail
+      self.releaseDate = releaseDate
+      self.accessType = accessType
     }
   }
   public var isNewSeason: Bool?
@@ -79,5 +88,7 @@ extension Webtoon.Episode: Codable {
     self.title = try container.decode(String.self, forKey: .title)
     let urlString = try container.decode(String.self, forKey: .thumbnail)
     self.thumbnail = URL(string: urlString)
+    self.releaseDate = try container.decode(Date.self, forKey: .releaseDate)
+    self.accessType = try container.decode(String.self, forKey: .accessType)
   }
 }
