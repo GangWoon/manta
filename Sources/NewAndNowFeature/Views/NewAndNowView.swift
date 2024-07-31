@@ -1,21 +1,19 @@
 import ComposableArchitecture
 import WebtoonDetailFeature
+import SharedModels
 import ViewHelper
 import ApiClient
 import SwiftUI
 
 public struct NewAndNowView: View {
-  // MARK: - ViewState
-  @Namespace private var animation
   @State private var showingHeader = true
   @State private var turningPoint = CGFloat.zero
-  private let coordinateSpace = "ScrollView"
+  @State private var categoryChangeThreshold: CGFloat = .zero
+  @State private var isScrolling: Bool = false
+  @State private var scrollID: UUID?
   
-  @State private var scrollValue: ScrollValue = .init(isScrolling: false)
-  struct ScrollValue: Equatable {
-    var isScrolling: Bool
-    var scrollID: UUID?
-  }
+  @Namespace private var animation
+  private let coordinateSpace = "ScrollView"
   
   @Perception.Bindable var store: StoreOf<NewAndNowCore>
   
@@ -53,6 +51,9 @@ public struct NewAndNowView: View {
         scrollView
           .padding(.horizontal, 16)
       }
+      .onChange(of: store.webtoons) {
+        categoryChangeThreshold = Array($0).categoryChangeThreshold
+      }
       .task { await store.send(.prepare).finish() }
       .bind($showingHeader, to: $store.forceShowingHeader)
       .animation(.easeInOut, value: showingHeader)
@@ -69,6 +70,7 @@ public struct NewAndNowView: View {
           )
         }
       }
+      .alert($store.scope(state: \.alert, action: \.alert))
     }
   }
   
@@ -98,8 +100,8 @@ public struct NewAndNowView: View {
             : Color.manta.stealGray
           )
           .onTapGesture {
-            scrollValue.scrollID = store.state.scrollID(for: item)
-            scrollValue.isScrolling = true
+            scrollID = store.state.scrollID(for: item)
+            isScrolling = true
           }
       } underline: {
         Color.manta.white
@@ -113,7 +115,7 @@ public struct NewAndNowView: View {
   private var scrollView: some View {
     GeometryReader { outer in
       let outerHeight = outer.size.height
-      AutoScrollView(anchor: .top, scrollID: scrollValue.scrollID) {
+      AutoScrollView(anchor: .top, scrollID: scrollID) {
         VStack {
           let list = Array(
             zip(
@@ -130,8 +132,8 @@ public struct NewAndNowView: View {
         }
         .background { scrollDirectionTracker(outerHeight) }
         .readScrollOffset(coordinateSpace) { offset in
-          guard !scrollValue.isScrolling else { return }
-          let value = offset > store.categoryChangeHeight
+          guard !isScrolling else { return }
+          let value = offset > categoryChangeThreshold
           ? NewAndNowCore.State.ReleaseStatus.newArrivals
           : .comingSoon
           store.send(.binding(.set(\.selectedReleaseStatus, value)))
@@ -162,13 +164,13 @@ public struct NewAndNowView: View {
     let thresholdScrollDistance: CGFloat = 50
     if
       (showingHeader && newValue > oldValue)
-      || (!showingHeader && newValue < oldValue)
+        || (!showingHeader && newValue < oldValue)
     {
       turningPoint = newValue
     }
     if
       (showingHeader && turningPoint > newValue)
-      || (!showingHeader && (newValue - turningPoint) > thresholdScrollDistance)
+        || (!showingHeader && (newValue - turningPoint) > thresholdScrollDistance)
     {
       showingHeader = newValue > turningPoint
     }
@@ -177,12 +179,20 @@ public struct NewAndNowView: View {
   private var scrollStausTracker: some Gesture {
     DragGesture()
       .onChanged { _ in
-        scrollValue.isScrolling = true
-        scrollValue.scrollID = nil
+        isScrolling = true
+        scrollID = nil
       }
       .onEnded { _ in
-        scrollValue.isScrolling = false
+        isScrolling = false
       }
+  }
+}
+
+private extension [Webtoon] {
+  var categoryChangeThreshold: CGFloat {
+    filter { $0.releaseDate != nil }
+      .map { $0.episodes.isEmpty ? 500.0 : 600 }
+      .reduce(into: 0, +=)
   }
 }
 
@@ -208,7 +218,9 @@ extension NewAndNowCore.State.ReleaseStatus {
 
 #Preview {
   NewAndNowView(
-    store: Store(initialState: NewAndNowCore.State()) {
+    store: Store(
+      initialState: NewAndNowCore.State()
+    ) {
       NewAndNowCore()
     }
   )

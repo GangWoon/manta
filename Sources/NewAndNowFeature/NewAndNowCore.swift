@@ -1,29 +1,22 @@
 import ComposableArchitecture
 import WebtoonDetailFeature
+import LocalDatabaseClient
 import SharedModels
 import Foundation
 import ApiClient
 
 @Reducer
-public struct NewAndNowCore {
+public struct NewAndNowCore: Sendable {
   @ObservableState
   public struct State: Equatable, Sendable {
     /// 복잡한 스크롤 뷰 로직은 뷰에서만 처리하려고 설계했지만, 스크롤 뷰 해더를 강제적으로 노출시키기 위해서 만든 값입니다.
-    /// 해더를 노출시키기는 로직을 리듀서 내부에서 관리하시며 안됩니다.
     public var forceShowingHeader: Bool = false
-    public var categoryChangeHeight: CGFloat = .zero
-    var scrollThreshold: CGFloat {
-      webtoonRows
-        .filter { $0.releaseStatus == .comingSoon }
-        .map { $0.episodes.isEmpty ? 500.0 : 600 }
-        .reduce(into: 0, +=)
-    }
     
     public var webtoons: IdentifiedArrayOf<Webtoon> = []
     public var webtoonRows: IdentifiedArrayOf<WebToonCore.State> = []
     public var selectedWebtoonRow: WebtoonDetail.State?
     public var selectedReleaseStatus: ReleaseStatus = .comingSoon
-    public var releaseCategories: [ReleaseStatus] = ReleaseStatus.allCases
+    public let releaseCategories: [ReleaseStatus] = ReleaseStatus.allCases
     public enum ReleaseStatus: Hashable, Sendable, CaseIterable {
       case comingSoon
       case newArrivals
@@ -36,21 +29,48 @@ public struct NewAndNowCore {
       public var thumbnail: URL?
       public var releaseDate: Date
     }
+    @Presents public var alert: AlertState<Action.Alert>?
     
-    public init() { }
+    public init(
+      forceShowingHeader: Bool = false,
+      webtoons: IdentifiedArrayOf<Webtoon> = [],
+      webtoonRows: IdentifiedArrayOf<WebToonCore.State> = [],
+      selectedWebtoonRow: WebtoonDetail.State? = nil,
+      selectedReleaseStatus: ReleaseStatus = .comingSoon,
+      notificationItemScrollID: NotificationItem.ID? = nil,
+      notificationItems: [NotificationItem] = [],
+      alert: AlertState<Action.Alert>? = nil
+    ) {
+      self.forceShowingHeader = forceShowingHeader
+      self.webtoons = webtoons
+      self.webtoonRows = webtoonRows
+      self.selectedWebtoonRow = selectedWebtoonRow
+      self.selectedReleaseStatus = selectedReleaseStatus
+      self.notificationItemScrollID = notificationItemScrollID
+      self.notificationItems = notificationItems
+      self.alert = alert
+    }
   }
   
   public enum Action: Equatable, Sendable, BindableAction {
     case prepare
-    case fetchResponse(Components.Schemas.NewAndNow)
+    case webtoonResponse(Components.Schemas.NewAndNow)
+    case updateWebtoonRows([UUID])
     case notificationItemTapped(State.NotificationItem.ID)
     case webtoonRows(IdentifiedActionOf<WebToonCore>)
     case webtoonDetail(WebtoonDetail.Action)
+    case updateAlertState(_ message: String, _ hasAction: Bool)
+    case alert(PresentationAction<Alert>)
     case binding(BindingAction<State>)
+    
+    @CasePathable
+    public enum Alert: Equatable, Sendable {
+      case reRequest
+    }
   }
   
+  @Dependency(\.database) private var database
   @Dependency(\.apiClient) private var apiClient
-  @Dependency(\.uuid) private var uuid
   
   public init() { }
   
@@ -60,74 +80,64 @@ public struct NewAndNowCore {
     Reduce<State, Action> { state, action in
       switch action {
       case .prepare:
-        return .run { send in
-          do {
-            let response = try await apiClient.fetchNewAndNow()
-            switch response {
-            case .ok(let ok):
-              await send(.fetchResponse(ok.body.json))
-              
-            case .undocumented(statusCode: let code):
-              print(code)
-            }
-          } catch { 
-            print(error)
-          }
-        }
+        return fetchWebtoons()
         
-      case .fetchResponse(let data):
+      case .webtoonResponse(let data):
         let webtoons = data.webtoons
         state.webtoons.append(contentsOf: webtoons)
-        state.webtoonRows.append(contentsOf: webtoons.map(\.webtoonRow))
+        return .run { send in
+          let ids = try await database.fetchNotifiedWebtoons()
+          await send(.updateWebtoonRows(ids))
+        } catch: { error, send in
+          debugPrint(error)
+          await send(.updateAlertState("데이터를 불러오는데 실패했습니다.", false))
+        }
         
-        /// ViewState를 Reducer 내부로 가두는걸 선호하지 않지만,
-        /// Reducer macro에서 발생하는 View에서 State변경 에러를 피하고자 추가햇습니다.
-        state.categoryChangeHeight = state.scrollThreshold
+      case .updateWebtoonRows(let ids):
+        let webtoonRows = state.webtoons
+          .map { $0.webtoonRow(ids.contains($0.id)) }
+        state.webtoonRows.append(contentsOf: webtoonRows)
+        
+        state.notificationItems = webtoonRows
+          .filter(\.isNotified)
+          .compactMap(\.notificationItem)
         return .none
         
-      case .notificationItemTapped(let id):
+      case .notificationItemTapped:
         return .none
         
       case .webtoonRows(.element(id: let id, action: let action)):
-        guard
-          let webtoonRow = state.webtoonRows[id: id]
-        else { return .none }
-        switch action {
-        case .tapped:
-          state.selectedWebtoonRow = state.webtoons[id: id]?
-            .webtoonDetail(isNotified: webtoonRow.isNotified)
-          return .none
-          
-        case .binding(\.isNotified):
-          guard webtoonRow.releaseStatus == .comingSoon else { return .none }
-          state.forceShowingHeader = true
-          if webtoonRow.isNotified {
-            if let item = webtoonRow.notificationItem {
-              state.notificationItems.insertSorted(item)
-            }
-          } else {
-            if let index = state.notificationItems.firstIndex(where: { $0.id == id }) {
-              state.notificationItems.remove(at: index)
-            }
-          }
-          return .run { send in
-            /// ScrollView가 정상적으로 동작하지 않아서 강제로 딜레이를 주고 scrollID가 설정되도록 구현했습니다.
-            try await Task.sleep(for: .seconds((0.1)))
-            await send(.binding(.set(\.notificationItemScrollID, webtoonRow.isNotified ? id : nil)))
-          }
-          
-        default:
-          return .none
-        }
+        return webtoonRows(state: &state, id: id, action: action)
         
       case .webtoonDetail(let action):
-        if case .dismiss = action {
-          state.selectedWebtoonRow = nil
-        }
+        guard case .dismiss = action else { return .none }
+        state.selectedWebtoonRow = nil
         return .none
         
-      case .webtoonRows,
-          .binding:
+      case .updateAlertState(let description, let hasAction):
+        let action: ButtonState<Action.Alert>
+        if hasAction {
+          action = .init(role: .cancel, action: .reRequest) {
+            TextState(description)
+          }
+        } else {
+          action = .init(role: .cancel) {
+            TextState(description)
+          }
+        }
+        state.alert = AlertState(
+          title: { TextState("알림") },
+          actions: { action },
+          message: {
+            TextState(description)
+          }
+        )
+        return .none
+        
+      case .alert(.presented(.reRequest)):
+        return fetchWebtoons()
+        
+      case .webtoonRows, .alert, .binding:
         return .none
       }
     }
@@ -136,6 +146,68 @@ public struct NewAndNowCore {
     }
     .ifLet(\.selectedWebtoonRow, action: \.webtoonDetail) {
       WebtoonDetail()
+    }
+    .ifLet(\.$alert, action: \.alert)
+  }
+  
+  private func fetchWebtoons() -> Effect<Action> {
+    .run { send in
+      let response = try await apiClient.fetchNewAndNow()
+      switch response {
+      case .ok(let ok):
+        await send(.webtoonResponse(ok.body.json))
+      case .undocumented(statusCode: let code):
+        await send(.updateAlertState("에러 코드: \(code)\n재요청을 시도하겠습니다.", true))
+      }
+    } catch: { error, send in
+      debugPrint(error)
+      await send(.updateAlertState("서버로 부터 데이터를 받는데 실패했습니다.\n재요청을 시도하겠습니다.", true))
+    }
+  }
+  
+  private func webtoonRows(
+    state: inout State,
+    id: WebToonCore.State.ID,
+    action: WebToonCore.Action
+  ) -> Effect<Action> {
+    guard
+      let webtoonRow = state.webtoonRows[id: id]
+    else { return .none }
+    switch action {
+    case .tapped:
+      state.selectedWebtoonRow = state.webtoons[id: id]?
+        .webtoonDetail(isNotified: webtoonRow.isNotified)
+      return .none
+      
+    case .binding(\.isNotified):
+      guard
+        webtoonRow.releaseStatus == .comingSoon
+      else { return .none }
+      state.forceShowingHeader = true
+      if webtoonRow.isNotified,
+         let item = webtoonRow.notificationItem {
+        state.notificationItems.insertSorted(item)
+      } else if let index = state.notificationItems.firstIndex(where: { $0.id == id }) {
+        state.notificationItems.remove(at: index)
+      }
+      return .merge(
+        .run { send in
+          /// ScrollView가 정상적으로 동작하지 않아서 강제로 딜레이를 주고 scrollID가 설정되도록 구현했습니다.
+          try await Task.sleep(for: .seconds((0.1)))
+          await send(.binding(.set(\.notificationItemScrollID, webtoonRow.isNotified ? id : nil)))
+        },
+        .run { _ in
+          try await webtoonRow.isNotified
+          ? database.saveNotifiedWebtoon(id)
+          : database.deleteNotifiedWebtoon(id)
+        } catch: { error, send in
+          debugPrint(error)
+          await send(.updateAlertState("데이터를 저장하는데 실패했습니다.\n잠시후 다시 시도해주세요.", false))
+        }
+      )
+      
+    default:
+      return .none
     }
   }
 }
@@ -148,7 +220,7 @@ private extension Components.Schemas.NewAndNow {
 }
 
 private extension Webtoon {
-  var webtoonRow: WebToonCore.State {
+  func webtoonRow(_ isNotified: Bool) -> WebToonCore.State {
     .init(
       id: id,
       releaseDate: releaseDate,
@@ -162,7 +234,8 @@ private extension Webtoon {
       episodes: .init(
         colorCode: thumbnailColor,
         episodes: episodes
-      )
+      ),
+      isNotified: isNotified
     )
   }
   
