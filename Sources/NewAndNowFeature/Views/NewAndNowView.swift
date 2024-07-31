@@ -42,9 +42,12 @@ public struct NewAndNowView: View {
         
         scrollViewHeader
           .padding(.horizontal, 16)
-          .background(alignment: .bottom) {
-            Color.gray
-              .frame(height: 1)
+          .background {
+            VStack(spacing: 0) {
+              Color.manta.deepGray
+              Color.manta.gray
+                .frame(height: 1)
+            }
           }
         
         scrollView
@@ -77,29 +80,33 @@ public struct NewAndNowView: View {
         Image(systemName: "text.magnifyingglass")
         Image(systemName: "person.crop.circle")
       }
-      .font(.system(size: 22).bold())
+      .font(.title2.bold())
     }
     .foregroundStyle(.manta.white)
   }
   
   private var scrollViewHeader: some View {
-    AnimatedUnderlineTabBar(
-      currentTab: $store.selectedReleaseStatus,
-      items: store.releaseCategories
-    ) { item in
-      Text(item.title)
-        .foregroundStyle(
-          store.selectedReleaseStatus == item
-          ? Color.manta.white
-          : Color.manta.stealGray
-        )
-        .onTapGesture {
-          scrollValue.scrollID = store.state.scrollID(for: item)
-          scrollValue.isScrolling = true
-        }
-    } underline: {
-      Color.manta.white
-        .frame(height: 2)
+    HStack {
+      AnimatedUnderlineTabBar(
+        currentTab: $store.selectedReleaseStatus,
+        items: store.releaseCategories
+      ) { item in
+        Text(item.title)
+          .foregroundStyle(
+            store.selectedReleaseStatus == item
+            ? Color.manta.white
+            : Color.manta.stealGray
+          )
+          .onTapGesture {
+            scrollValue.scrollID = store.state.scrollID(for: item)
+            scrollValue.isScrolling = true
+          }
+      } underline: {
+        Color.manta.white
+          .frame(height: 2)
+      }
+      
+      Spacer()
     }
   }
   
