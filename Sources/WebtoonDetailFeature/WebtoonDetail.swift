@@ -6,7 +6,7 @@ import SwiftUI
 @Reducer
 public struct WebtoonDetail {
   @ObservableState
-  public struct State: Equatable {
+  public struct State: Equatable, Sendable {
     public var buttons: [ButtonType]
     public enum ButtonType: Hashable, Sendable {
       case save

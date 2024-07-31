@@ -12,8 +12,8 @@ extension View {
   }
 }
 
-struct SizePreferenceKey: PreferenceKey {
-  static var defaultValue: CGSize = .zero
+struct SizePreferenceKey: @preconcurrency PreferenceKey {
+  @MainActor static var defaultValue: CGSize = .zero
   static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
   }
 }

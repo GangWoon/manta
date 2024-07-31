@@ -113,7 +113,7 @@ private extension NewAndNowCore.State.NotificationItem {
 }
 
 #if DEBUG
-var dates: [Date] = {
+let dates: [Date] = {
   var calendar = Calendar.current
   calendar.timeZone = TimeZone(identifier: "Asia/Seoul")!
   return [
