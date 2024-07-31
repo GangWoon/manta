@@ -12,7 +12,7 @@ struct WebtoonInfoView: View {
         .font(.subheadline.bold())
       
       Text(state.summary)
-        .foregroundStyle(.manta.lightGray)
+        .foregroundStyle(.manta.stealGray)
       
       HStack {
         Text(state.ageRating)

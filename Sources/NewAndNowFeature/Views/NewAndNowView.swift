@@ -91,7 +91,7 @@ public struct NewAndNowView: View {
         .foregroundStyle(
           store.selectedReleaseStatus == item
           ? Color.manta.white
-          : Color.manta.lightGray
+          : Color.manta.stealGray
         )
         .onTapGesture {
           scrollValue.scrollID = store.state.scrollID(for: item)

@@ -16,7 +16,7 @@ struct CreatorsInfoView: View {
       ) {
         ForEach(creators.details, id: \.0) { key, value in
           Text(key)
-            .foregroundStyle(.manta.lightGray)
+            .foregroundStyle(.manta.stealGray)
           
           Text(value)
         }

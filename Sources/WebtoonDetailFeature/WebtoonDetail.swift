@@ -247,7 +247,7 @@ public struct WebtoonDetailView: View {
         
         Text(store.primaryTag)
           .font(.caption)
-          .foregroundStyle(.manta.lightGray)
+          .foregroundStyle(.manta.stealGray)
       }
       .matchedGeometryEffect(
         id: store.tags,
@@ -267,7 +267,7 @@ public struct WebtoonDetailView: View {
       
       if let date = store.releaseDate {
         Text("Coming " + dateFormatter.string(from: date))
-          .foregroundStyle(.manta.lightGray)
+          .foregroundStyle(.manta.stealGray)
           .font(.caption)
           .padding(.bottom, 16)
       }
@@ -285,11 +285,11 @@ public struct WebtoonDetailView: View {
           }
           .frame(width: (proxy.size.width - 32) / 5)
         }
-        .foregroundStyle(.manta.lightGray)
+        .foregroundStyle(.manta.stealGray)
       }
       .padding(.bottom, 8)
       
-      Color.manta.lightGray
+      Color.manta.stealGray
         .frame(height: 1)
         .padding(.bottom, 16)
     }
