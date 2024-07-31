@@ -249,11 +249,6 @@ public struct WebtoonDetailView: View {
           .font(.caption)
           .foregroundStyle(.manta.stealGray)
       }
-      .matchedGeometryEffect(
-        id: store.tags,
-        in: animation,
-        properties: .position
-      )
       
       Text(store.title)
         .font(.title)

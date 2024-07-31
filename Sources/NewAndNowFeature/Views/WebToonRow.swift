@@ -155,11 +155,6 @@ struct WebToonRow: View {
     .onTapGesture {
       store.send(.binding(.set(\.isSummaryExpaneded, !store.isSummaryExpaneded)), animation: .easeInOut)
     }
-    .matchedGeometryEffect(
-      id: store.tags,
-      in: animation,
-      properties: .position
-    )
     .redactedShimmering(isShimmering)
   }
   
