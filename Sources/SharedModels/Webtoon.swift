@@ -59,7 +59,7 @@ public struct Webtoon: Identifiable, Sendable, Equatable {
 extension Webtoon: Codable {
   public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
-    self.id = (try? container.decode(UUID.self, forKey: .id)) ?? UUID()
+    self.id = try container.decode(UUID.self, forKey: .id)
     self.releaseDate = try container.decodeIfPresent(Date.self, forKey: .releaseDate)
     self.title = try container.decode(String.self, forKey: .title)
     let urlString = try container.decode(String.self, forKey: .thumbnail)

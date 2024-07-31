@@ -1,6 +1,7 @@
 {
   "coming_soon": [
     {
+      "id": "CD1A586B-BE5B-44B9-872E-978302CDBAE7",
       "release_date": "2024-07-06T00:00:00Z",
       "title": "Choose Your Heroes Carefully",
       "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/b67c99a6-6be1-47e8-bd51-e74629f497a5",
@@ -17,6 +18,7 @@
         }
     },
     {
+      "id": "9BD541B9-B64E-49BF-99AA-81DDD5167BE0",
       "release_date": "2024-07-17T00:00:00Z",
       "title": "Rewriting My Tragic Ending",
       "season": "2",
@@ -89,6 +91,7 @@
       ]
     },
     {
+      "id": "A8343B63-2D4B-4204-BB87-2520E25DAECF",
       "release_date": "2024-07-21T00:00:00Z",
       "title": "The White Tiger's Daughter",
       "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/de19b23d-4bda-4aaa-bb38-4ce08862e13e",
@@ -105,6 +108,7 @@
         }
     },
     {
+      "id": "05497095-52BB-4CF5-A234-A5EB836CA28B",
       "release_date": "2024-07-25T00:00:00Z",
       "title": "The Accidental Heiress",
       "season": "3",
@@ -178,6 +182,7 @@
       ]
     },
     {
+      "id": "58081421-9782-4CA5-9887-49E16244FAA4",
       "release_date": "2024-07-02T00:00:00Z",
       "title": "Escape the Original Male Lead!",
       "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/18d78b07-7dad-47c0-9e86-595baeb71cd5",
@@ -194,6 +199,7 @@
         }
     },
     {
+      "id": "9B7F1CF5-8A6C-443F-A2AC-728EA7BB3274",
       "release_date": "2024-07-10T00:00:00Z",
       "title": "Raising My Husband",
       "season": "2",
@@ -266,6 +272,7 @@
       ]
     },
     {
+      "id": "9DE234E2-09AA-4814-BF13-2ED63E0CDC18",
       "release_date": "2024-07-28T00:00:00Z",
       "title": "The Possessive Tyrant and His Sleepy Cat",
       "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/cc4cadd7-ab68-43ea-9186-84e0710f3f3b",
@@ -282,6 +289,7 @@
   ],
   "new_arrivals": [
     {
+      "id": "01B89FD5-10FD-4AFE-80FD-7CFFB62DA9EC",
       "title": "Reborn as the Enemy Prince",
       "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/e5545136-49cd-49f5-8034-7d30cab35fa7",
       "thumbnail_color": "#28292c",
@@ -296,6 +304,7 @@
       "is_new_season": "false"
     },
     {
+      "id": "263FF6DA-E757-4BBF-BAF9-EA5D195E1073",
       "title": "By My Side",
       "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/d1643b8b-54cb-42c2-9f71-77289a8cbc92",
       "thumbnail_color": "#3791ad",
@@ -342,6 +351,7 @@
       ]
     },
     {
+      "id": "44C9FD94-92BD-47F8-988B-E769C11117FA",
       "title": "Dear Hong Rang",
       "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/cbc07bd9-d095-4cdd-aa03-1cd93a965dd8",
       "thumbnail_color": "#4d4838",
@@ -357,6 +367,7 @@
       "is_new_season": "false"
     },
     {
+      "id": "393AE588-0C37-4AF4-924D-0EB060B2CBB3",
       "title": "I Don't Want to Be a Lady",
       "thumbnail": "https://github.com/GangWoon/manta/assets/48466830/140541a2-964e-4ec0-9955-3cbc5e44eaba",
       "thumbnail_color": "#D3D3D3",
