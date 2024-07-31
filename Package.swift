@@ -56,7 +56,8 @@ let package = Package(
     .target(
       name: "ViewHelper",
       dependencies: [
-        .product(name: "Perception", package: "swift-perception")
+        .product(name: "Perception", package: "swift-perception"),
+        .product(name: "Shimmer", package: "swiftui-shimmer")
       ]
     ),
     .target(name: "SharedModels")

@@ -30,7 +30,7 @@ struct WebtoonDetailRow: View {
         
         Text(dateFormatter.string(from: episode.releaseDate))
           .redactedShimmering(isShimmering)
-          .foregroundStyle(.manta.lightGray)
+          .foregroundStyle(.manta.stealGray)
       }
       
       Spacer()
@@ -67,13 +67,6 @@ private let dateFormatter: DateFormatter = {
   
   return formatter
 }()
-
-extension View {
-  func redactedShimmering(_ isActive: Bool) -> some View {
-    redacted(reason: isActive ? .placeholder : [])
-      .shimmering(active: isActive)
-  }
-}
 
 #if DEBUG
 @available(iOS 17.0, *)
