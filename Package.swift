@@ -7,10 +7,7 @@ let package = Package(
   products: [
     .library(
       name: "AppFeature",
-      targets: [
-        "NewAndNowFeature",
-        "WebtoonDetailFeature"
-      ]
+      targets: ["NewAndNowFeature"]
     ),
     .library(
       name: "WebtoonDetail",
@@ -21,7 +18,8 @@ let package = Package(
     .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", from: "1.11.2"),
     .package(url: "https://github.com/pointfreeco/swift-dependencies.git", from: "1.3.1"),
     .package(url: "https://github.com/pointfreeco/swift-perception.git", from: "1.3.2"),
-    .package(url: "https://github.com/markiv/SwiftUI-Shimmer.git", from: "1.5.0")
+    .package(url: "https://github.com/markiv/SwiftUI-Shimmer.git", from: "1.5.0"),
+    .package(url: "https://github.com/stephencelis/SQLite.swift.git", branch: "master")
   ],
   targets: [
     .target(
@@ -29,8 +27,9 @@ let package = Package(
       dependencies: [
         .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
         .product(name: "Shimmer", package: "swiftui-shimmer"),
-        "ApiClient",
         "WebtoonDetailFeature",
+        "ApiClient",
+        "LocalDatabaseClient",
         "SharedModels",
         "ViewHelper"
       ]
@@ -47,11 +46,17 @@ let package = Package(
     .target(
       name: "ApiClient",
       dependencies: [
-        .product(name: "Dependencies", package: "swift-dependencies"),
         .product(name: "DependenciesMacros", package: "swift-dependencies"),
         "SharedModels"
       ],
       resources: [.process("Resources")]
+    ),
+    .target(
+      name: "LocalDatabaseClient",
+      dependencies: [
+        .product(name: "SQLite", package: "sqlite.swift"),
+        .product(name: "DependenciesMacros", package: "swift-dependencies")
+      ]
     ),
     .target(
       name: "ViewHelper",
