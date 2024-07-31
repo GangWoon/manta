@@ -28,7 +28,7 @@ public struct NewAndNowView: View {
           .padding(.horizontal, 16)
         
         if showingHeader && !store.notificationItems.isEmpty {
-          WebToonNotificationItemList(
+          WebtoonNotificationItemList(
             notificationItems: store.notificationItems,
             scrollID: store.notificationItemScrollID,
             rowAction: { id in
@@ -124,7 +124,7 @@ public struct NewAndNowView: View {
             )
           )
           ForEach(list, id: \.0) { id, store in
-            WebToonRow(store: store, animation: animation)
+            WebtoonRow(store: store, animation: animation)
               .padding(.top, 16)
               .id(id)
             /// store.id로 했을 경우 스크롤 되지 않는 이슈 발생
@@ -197,7 +197,7 @@ private extension [Webtoon] {
 }
 
 private extension NewAndNowCore.State {
-  func scrollID(for releaseStatus: ReleaseStatus) -> WebToonCore.State.ID? {
+  func scrollID(for releaseStatus: ReleaseStatus) -> WebtoonCore.State.ID? {
     webtoonRows
       .filter { $0.releaseStatus == releaseStatus }
       .first?

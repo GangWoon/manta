@@ -5,7 +5,7 @@ import SwiftUI
 import Shimmer
 
 @Reducer
-public struct WebToonCore {
+public struct WebtoonCore {
   @ObservableState
   public struct State: Equatable, Sendable, Identifiable {
     var releaseStatus: NewAndNowCore.State.ReleaseStatus {
@@ -46,9 +46,9 @@ public struct WebToonCore {
   }
 }
 
-struct WebToonRow: View {
+struct WebtoonRow: View {
   @State private var isShimmering: Bool = false
-  let store: StoreOf<WebToonCore>
+  let store: StoreOf<WebtoonCore>
   
   var animation: Namespace.ID
   @Namespace var summaryAnimaiton
@@ -195,10 +195,10 @@ struct WebToonRow: View {
   private var notifyButton: some View {
     Button(
       action: {
-        let action: WebToonCore.Action
+        let action: WebtoonCore.Action
         let animation: Animation
         if store.releaseStatus == .comingSoon {
-          action = WebToonCore.Action
+          action = WebtoonCore.Action
             .binding(.set(\.isNotified, !store.isNotified))
           animation = .easeInOut
         } else {
@@ -281,9 +281,9 @@ private let monthFormatter = {
 struct WebtoonRowPreview: View {
   @Namespace var animation
   var body: some View {
-    WebToonRow(
+    WebtoonRow(
       store: Store(
-        initialState: WebToonCore.State(
+        initialState: WebtoonCore.State(
           id: .init(),
           releaseDate: .now,
           title: "Choose Your Heroes Carefully",
@@ -304,7 +304,7 @@ struct WebtoonRowPreview: View {
             ]
           )
         ),
-        reducer: WebToonCore.init
+        reducer: WebtoonCore.init
       ),
       animation: animation
     )

@@ -13,7 +13,7 @@ public struct NewAndNowCore: Sendable {
     public var forceShowingHeader: Bool = false
     
     public var webtoons: IdentifiedArrayOf<Webtoon> = []
-    public var webtoonRows: IdentifiedArrayOf<WebToonCore.State> = []
+    public var webtoonRows: IdentifiedArrayOf<WebtoonCore.State> = []
     public var selectedWebtoonRow: WebtoonDetail.State?
     public var selectedReleaseStatus: ReleaseStatus = .comingSoon
     public let releaseCategories: [ReleaseStatus] = ReleaseStatus.allCases
@@ -34,7 +34,7 @@ public struct NewAndNowCore: Sendable {
     public init(
       forceShowingHeader: Bool = false,
       webtoons: IdentifiedArrayOf<Webtoon> = [],
-      webtoonRows: IdentifiedArrayOf<WebToonCore.State> = [],
+      webtoonRows: IdentifiedArrayOf<WebtoonCore.State> = [],
       selectedWebtoonRow: WebtoonDetail.State? = nil,
       selectedReleaseStatus: ReleaseStatus = .comingSoon,
       notificationItemScrollID: NotificationItem.ID? = nil,
@@ -57,7 +57,7 @@ public struct NewAndNowCore: Sendable {
     case webtoonResponse(Components.Schemas.NewAndNow)
     case updateWebtoonRows([UUID])
     case notificationItemTapped(State.NotificationItem.ID)
-    case webtoonRows(IdentifiedActionOf<WebToonCore>)
+    case webtoonRows(IdentifiedActionOf<WebtoonCore>)
     case webtoonDetail(WebtoonDetail.Action)
     case updateAlertState(_ message: String, _ hasAction: Bool)
     case alert(PresentationAction<Alert>)
@@ -142,7 +142,7 @@ public struct NewAndNowCore: Sendable {
       }
     }
     .forEach(\.webtoonRows, action: \.webtoonRows) {
-      WebToonCore()
+      WebtoonCore()
     }
     .ifLet(\.selectedWebtoonRow, action: \.webtoonDetail) {
       WebtoonDetail()
@@ -167,8 +167,8 @@ public struct NewAndNowCore: Sendable {
   
   private func webtoonRows(
     state: inout State,
-    id: WebToonCore.State.ID,
-    action: WebToonCore.Action
+    id: WebtoonCore.State.ID,
+    action: WebtoonCore.Action
   ) -> Effect<Action> {
     guard
       let webtoonRow = state.webtoonRows[id: id]
@@ -220,7 +220,7 @@ private extension Components.Schemas.NewAndNow {
 }
 
 private extension Webtoon {
-  func webtoonRow(_ isNotified: Bool) -> WebToonCore.State {
+  func webtoonRow(_ isNotified: Bool) -> WebtoonCore.State {
     .init(
       id: id,
       releaseDate: releaseDate,
@@ -254,7 +254,7 @@ private extension Webtoon {
   }
 }
 
-extension WebToonCore.State {
+extension WebtoonCore.State {
   var notificationItem: NewAndNowCore.State.NotificationItem? {
     if let releaseDate {
       return .init(

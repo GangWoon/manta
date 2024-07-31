@@ -2,7 +2,7 @@ import ComposableArchitecture
 import ViewHelper
 import SwiftUI
 
-struct WebToonNotificationItemList: View {
+struct WebtoonNotificationItemList: View {
   typealias NotificationItem = NewAndNowCore.State.NotificationItem
   var notificationItems: [NotificationItem]
   var scrollID: NotificationItem.ID?
@@ -126,7 +126,7 @@ let dates: [Date] = {
 
 @available(iOS 17.0, *)
 #Preview {
-  WebToonNotificationItemList(
+  WebtoonNotificationItemList(
     notificationItems: [
       .init(
         id: UUID(),
