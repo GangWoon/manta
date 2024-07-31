@@ -37,7 +37,7 @@ struct WebToonNotificationItemList: View {
     .background {
       Capsule()
         .fillAndStroke(
-          fill: .black,
+          fill: .manta.black,
           stroke: item.nowAvailable
           ? .palette
           : .transparent,
@@ -53,9 +53,10 @@ struct WebToonNotificationItemList: View {
         .clipShape(Circle())
         .frame(width: 32, height: 32)
     } placeholder: {
-      Color.clear
+      Color.manta.slateGray
         .frame(width: 32, height: 32)
-      
+        .clipShape(Circle())
+        .shimmering()
     }
     .frame(width: 32, height: 32)
     .overlay(alignment: .topTrailing) {
@@ -75,7 +76,7 @@ struct WebToonNotificationItemList: View {
           .fill(Color.red)
           .overlay {
             Circle()
-              .stroke(Color.black, lineWidth: 2)
+              .stroke(Color.manta.black, lineWidth: 2)
           }
       }
   }

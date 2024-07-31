@@ -70,7 +70,7 @@ struct WebToonRow: View {
           
           Text(store.title)
             .font(.title2.bold())
-            .foregroundStyle(.white)
+            .foregroundStyle(.manta.white)
             .matchedGeometryEffect(
               id: store.title,
               in: animation,
@@ -99,7 +99,8 @@ struct WebToonRow: View {
         if !store.episodes.isEmpty {
           EpisodesView(
             store: store
-              .scope(state: \.episodes, action: \.episodes)
+              .scope(state: \.episodes, action: \.episodes),
+            isShimmering: isShimmering
           )
         }
       }
@@ -149,7 +150,7 @@ struct WebToonRow: View {
       }
     }
     .font(.caption)
-    .foregroundStyle(store.isSummaryExpaneded ? .white : Color.manta.lightGray)
+    .foregroundStyle(store.isSummaryExpaneded ? .manta.white : Color.manta.lightGray)
     .allowsHitTesting(!isShimmering)
     .onTapGesture {
       store.send(.binding(.set(\.isSummaryExpaneded, !store.isSummaryExpaneded)), animation: .easeInOut)
@@ -173,13 +174,13 @@ struct WebToonRow: View {
             .lineLimit(2)
           
           Text("More")
-            .foregroundStyle(.white)
+            .foregroundStyle(.manta.white)
         }
         .matchedGeometryEffect(id: store.summary, in: summaryAnimaiton, properties: .size)
       }
     }
     .font(.caption)
-    .foregroundStyle(store.isSummaryExpaneded ? .white : Color.manta.lightGray)
+    .foregroundStyle(store.isSummaryExpaneded ? .manta.white : Color.manta.lightGray)
     .animation(.easeInOut, value: store.isSummaryExpaneded)
     .allowsHitTesting(!isShimmering)
     .onTapGesture {
@@ -189,7 +190,7 @@ struct WebToonRow: View {
   }
   
   private var dimmingView: some View {
-    Color.black
+    Color.manta.black
       .opacity(0.25)
       .onTapGesture {
         store.send(.binding(.set(\.isSummaryExpaneded, !store.isSummaryExpaneded)), animation: .easeInOut)

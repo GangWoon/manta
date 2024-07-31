@@ -25,6 +25,7 @@ public struct Manta {
   public let slateGray = Color(hex: "#708090")
   public let lightGray = Color(hex: "#D3D3D3")
   public let deepGray = Color(hex: "#1b1d20")
+  public let charcoal = Color(hex: "#28292d")
   public let white = Color(hex: "#ffffff")
   public let black = Color(hex: "#000000")
   public let blackA05 = Color(hex: "#000000").opacity(0.6)

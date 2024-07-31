@@ -3,7 +3,6 @@ import SharedModels
 import ViewHelper
 import SwiftUI
 
-//TODO: - Remove Reducer
 @Reducer
 public struct EpisodesCore {
   @ObservableState
@@ -38,24 +37,21 @@ public struct EpisodesCore {
     BindingReducer()
     
     Reduce { state, action in
-      switch action {
-      case .episodeTapped:
-        return .none
-      case .binding:
-        return .none
-      }
+        .none
     }
   }
 }
 
 struct EpisodesView: View {
   let store: StoreOf<EpisodesCore>
+  var isShimmering: Bool
   
   var body: some View {
     WithPerceptionTracking {
       VStack(spacing: 0) {
         collapsed
           .frame(height: 24)
+          .redactedShimmering(isShimmering)
         
         expanded
           .transition(.opacity)
@@ -68,7 +64,11 @@ struct EpisodesView: View {
       .padding(.vertical, 8)
       .background {
         RoundedRectangle(cornerRadius: 9)
-          .fill(Color(hex: store.colorCode))
+          .fill(
+            isShimmering
+            ? Color.manta.slateGray
+            : Color(hex: store.colorCode)
+          )
       }
     }
   }
@@ -85,16 +85,18 @@ struct EpisodesView: View {
             height: store.isExpanded ? 0 : 24
           )
       } placeholder: {
-        Color.clear
+        Color.manta.slateGray
+          .frame(width: 24, height: 24)
+          .shimmering()
       }
       
       Text(store.title)
-        .font(.system(size: 14).bold())
+        .font(.subheadline.bold())
       
       Spacer()
       
       Image(systemName: store.arrowImageName)
-        .font(.system(size: 11).bold())
+        .font(.caption.bold())
     }
     .foregroundStyle(.manta.white)
     .onTapGesture {
@@ -114,12 +116,13 @@ struct EpisodesView: View {
                 .cornerRadius(6)
                 .frame(height: 64)
             } placeholder: {
-              Color.clear
+              Color.manta.slateGray
+                .shimmering()
             }
             
             Text(episode.title)
-              .font(.system(size: 10))
-              .foregroundStyle(Color.white)
+              .font(.caption2)
+              .foregroundStyle(Color.manta.white)
           }
         }
       }
@@ -128,6 +131,7 @@ struct EpisodesView: View {
 }
 
 #if DEBUG
+@available(iOS 17.0, *)
 #Preview {
   EpisodesView(
     store: Store(
@@ -143,7 +147,8 @@ struct EpisodesView: View {
         ]
       ),
       reducer: EpisodesCore.init
-    )
+    ),
+    isShimmering: true
   )
 }
 #endif

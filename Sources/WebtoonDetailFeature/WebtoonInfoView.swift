@@ -27,7 +27,7 @@ struct WebtoonInfoView: View {
             .padding(3)
             .background{
               RoundedRectangle(cornerRadius: 4)
-                .fill(Color(hex: "#28292d"))
+                .fill(Color.manta.charcoal)
             }
         }
         
@@ -38,7 +38,7 @@ struct WebtoonInfoView: View {
               .padding(.horizontal, 4)
               .background {
                 RoundedRectangle(cornerRadius: 4)
-                  .stroke(Color(hex: "#28292d"), lineWidth: 2)
+                  .stroke(Color.manta.charcoal, lineWidth: 2)
               }
           }
         }
