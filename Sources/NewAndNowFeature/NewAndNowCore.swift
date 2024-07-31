@@ -121,7 +121,9 @@ public struct NewAndNowCore {
         }
         
       case .webtoonDetail(let action):
-        state.selectedWebtoonRow = nil
+        if case .dismiss = action {
+          state.selectedWebtoonRow = nil
+        }
         return .none
         
       case .webtoonRows,
