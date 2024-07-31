@@ -47,9 +47,11 @@ public struct WebToonCore {
 }
 
 struct WebToonRow: View {
+  @State private var isShimmering: Bool = false
   let store: StoreOf<WebToonCore>
   
   var animation: Namespace.ID
+  @Namespace var summaryAnimaiton
   
   var body: some View {
     WithPerceptionTracking {
@@ -67,13 +69,14 @@ struct WebToonRow: View {
           Spacer()
           
           Text(store.title)
-            .font(.system(size: 22).bold())
+            .font(.title2.bold())
             .foregroundStyle(.white)
             .matchedGeometryEffect(
               id: store.title,
               in: animation,
               properties: .position
             )
+            .redactedShimmering(isShimmering)
           
           VStack(alignment: .leading) {
             tagList
@@ -84,7 +87,11 @@ struct WebToonRow: View {
         }
         .frame(height: store.episodes.isEmpty ? 500 : 600)
         .padding(.horizontal, 16)
-        .background { dimmingView }
+        .background {
+          if store.isSummaryExpaneded {
+            dimmingView
+          }
+        }
         .background { thumbnail }
         .cornerRadius(10)
         .onTapGesture { store.send(.tapped, animation: .hero) }
@@ -102,18 +109,20 @@ struct WebToonRow: View {
   private func releaseDate(_ date: Date) -> some View {
     VStack(spacing: 0) {
       Text(dayFormatter.string(from: date))
-        .font(.system(size: 24).bold())
+        .font(.title.bold())
         .foregroundStyle(.manta.white)
       
       Text(monthFormatter.string(from: date))
-        .font(.system(size: 10).bold())
+        .font(.caption2.bold())
         .foregroundStyle(.manta.gray)
     }
-    .frame(width: 45, height: 52)
+    .padding(.horizontal, 8)
+    .padding(.vertical, 4)
     .background {
       RoundedRectangle(cornerRadius: 8)
         .fill(.manta.blackA05)
     }
+    .redactedShimmering(isShimmering)
   }
   
   private var eqisodeTag: some View {
@@ -122,7 +131,7 @@ struct WebToonRow: View {
       ? "NEW SEASON"
       : "NEW"
     )
-    .font(.system(size: 14).bold())
+    .font(.caption.bold())
     .foregroundStyle(.manta.white)
     .padding(.vertical, 2)
     .padding(.horizontal, 4)
@@ -130,6 +139,7 @@ struct WebToonRow: View {
       RoundedRectangle(cornerRadius: 4)
         .fill(Color.red)
     }
+    .redactedShimmering(isShimmering)
   }
   
   private var tagList: some View {
@@ -138,103 +148,98 @@ struct WebToonRow: View {
         Text("#\(tag)")
       }
     }
-    .font(.system(size: 12))
-    .foregroundStyle(store.isSummaryExpaneded ? .white : Color(hex: "#D3D3D3"))
+    .font(.caption)
+    .foregroundStyle(store.isSummaryExpaneded ? .white : Color.manta.lightGray)
+    .allowsHitTesting(!isShimmering)
     .onTapGesture {
-      store.send(.binding(.set(\.isSummaryExpaneded, !store.isSummaryExpaneded)))
+      store.send(.binding(.set(\.isSummaryExpaneded, !store.isSummaryExpaneded)), animation: .easeInOut)
     }
     .matchedGeometryEffect(
       id: store.tags,
       in: animation,
       properties: .position
     )
+    .redactedShimmering(isShimmering)
   }
   
   private var summaryView: some View {
-    HStack(alignment: .bottom) {
-      Text(store.summary)
-        .lineLimit(store.isSummaryExpaneded ? nil : 2)
-        .animation(.easeInOut(duration: 0.2), value: store.isSummaryExpaneded)
-        .transition(.move(edge: .bottom))
-      
-      if !store.isSummaryExpaneded {
-        Text("More")
-          .foregroundStyle(.white)
-          .onTapGesture {
-            store.send(.binding(.set(\.isSummaryExpaneded, true)))
-          }
+    ZStack {
+      if store.isSummaryExpaneded {
+        Text(store.summary)
+          .matchedGeometryEffect(id: store.summary, in: summaryAnimaiton, properties: .size)
+      } else {
+        HStack(alignment: .bottom) {
+          Text(store.summary)
+            .lineLimit(2)
+          
+          Text("More")
+            .foregroundStyle(.white)
+        }
+        .matchedGeometryEffect(id: store.summary, in: summaryAnimaiton, properties: .size)
       }
     }
+    .font(.caption)
+    .foregroundStyle(store.isSummaryExpaneded ? .white : Color.manta.lightGray)
     .animation(.easeInOut, value: store.isSummaryExpaneded)
-    .font(.system(size: 12))
-    .foregroundStyle(store.isSummaryExpaneded ? .white : Color(hex: "#D3D3D3"))
+    .allowsHitTesting(!isShimmering)
     .onTapGesture {
-      store.send(.binding(.set(\.isSummaryExpaneded, !store.isSummaryExpaneded)))
+      store.send(.binding(.set(\.isSummaryExpaneded, !store.isSummaryExpaneded)), animation: .easeInOut)
     }
+    .redactedShimmering(isShimmering)
   }
   
   private var dimmingView: some View {
-    VStack {
-      if store.isSummaryExpaneded {
-        Color.black
-          .opacity(0.25)
-          .onTapGesture {
-            store.send(.binding(.set(\.isSummaryExpaneded, !store.isSummaryExpaneded)))
-          }
+    Color.black
+      .opacity(0.25)
+      .onTapGesture {
+        store.send(.binding(.set(\.isSummaryExpaneded, !store.isSummaryExpaneded)), animation: .easeInOut)
       }
-    }
   }
   
   private var notifyButton: some View {
-    Group {
-      if store.releaseStatus == .comingSoon {
-        Button(
-          action: {
-            let bindingAction = WebToonCore.Action
-              .binding(.set(\.isNotified, !store.isNotified))
-            store.send(bindingAction, animation: .easeInOut)
-          }
-        ) {
-          HStack {
-            Image(systemName: store.isNotified ? "bell.fill" : "bell")
-              .wiggleAnimation(isSelected: store.isNotified)
-            
-            Text(store.isNotified ? "Notification set" : "Notify me")
-          }
-          .font(.system(size: 16).bold())
-          .foregroundStyle(.manta.white)
-          .padding(.vertical, 8)
-          .frame(maxWidth: .infinity)
-          .background {
-            RoundedRectangle(cornerRadius: 8)
-              .fillAndStroke(
-                fill: store.isNotified
-                ? Color.clear
-                : Color(hex: "#D3D3D3").opacity(0.6),
-                stroke: store.isNotified
-                ? Color(hex: "#D3D3D3").opacity(0.6)
-                : Color.clear
-              )
-          }
+    Button(
+      action: {
+        let action: WebToonCore.Action
+        let animation: Animation
+        if store.releaseStatus == .comingSoon {
+          action = WebToonCore.Action
+            .binding(.set(\.isNotified, !store.isNotified))
+          animation = .easeInOut
+        } else {
+          action = .tapped
+          animation = .hero
         }
-        .buttonStyle(ScaleButtonStyle())
-      } else {
-        Button(
-          action: { store.send(.tapped, animation: .hero) }
-        ) {
+        store.send(action, animation: animation)
+      }
+    ) {
+      HStack {
+        if store.releaseStatus == .comingSoon {
+          Image(systemName: store.isNotified ? "bell.fill" : "bell")
+            .wiggleAnimation(isSelected: store.isNotified)
+          
+          Text(store.isNotified ? "Notification set" : "Notify me")
+            .matchedGeometryEffect(id: "button", in: summaryAnimaiton)
+        } else {
           Text("Check it out")
-            .font(.system(size: 16).bold())
-            .foregroundStyle(.manta.white)
-            .padding(.vertical, 8)
-            .frame(maxWidth: .infinity)
-            .background {
-              RoundedRectangle(cornerRadius: 8)
-                .fill(Color(hex: "#D3D3D3").opacity(0.6))
-            }
         }
-        .buttonStyle(ScaleButtonStyle())
+      }
+      .font(.subheadline.bold())
+      .foregroundStyle(.manta.white)
+      .padding(.vertical, 8)
+      .frame(maxWidth: .infinity)
+      .background {
+        if store.releaseStatus == .comingSoon, store.isNotified {
+          RoundedRectangle(cornerRadius: 8)
+            .stroke(Color.manta.lightGray, lineWidth: 2)
+        } else {
+          RoundedRectangle(cornerRadius: 8)
+            .fill(Color.manta.lightGray.opacity(0.6))
+        }
       }
     }
+    .allowsHitTesting(!isShimmering)
+    .buttonStyle(ScaleButtonStyle())
+    .redactedShimmering(isShimmering)
   }
   
   private var thumbnail: some View {
@@ -255,9 +260,10 @@ struct WebToonRow: View {
               .frame(height: 40)
           }
         }
+        .onAppear { isShimmering = false }
     } placeholder: {
-      Color(hex: store.thumbnailColor)
-        .shimmering(bandSize: 0.6)
+      Color.manta.slateGray
+        .onAppear { isShimmering = true }
     }
     .matchedGeometryEffect(id: store.thumbnailURL, in: animation)
   }
@@ -283,6 +289,7 @@ struct WebtoonRowPreview: View {
       store: Store(
         initialState: WebToonCore.State(
           id: .init(),
+          releaseDate: .now,
           title: "Choose Your Heroes Carefully",
           tags: ["BL", "Fantasy", "Adventure"],
           thumbnailURL: URL(string: "https://github.com/GangWoon/manta/assets/48466830/8d4487b9-a8fc-4612-9444-b5c5dc1b19c7"),
@@ -307,6 +314,8 @@ struct WebtoonRowPreview: View {
     )
   }
 }
+
+@available(iOS 17.0, *)
 #Preview {
   WebtoonRowPreview()
     .frame(height: 500)
