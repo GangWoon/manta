@@ -7,6 +7,10 @@ let package = Package(
   products: [
     .library(
       name: "AppFeature",
+      targets: ["AppFeature"]
+    ),
+    .library(
+      name: "NewAndNowFeature",
       targets: ["NewAndNowFeature"]
     ),
     .library(
@@ -23,6 +27,14 @@ let package = Package(
   ],
   targets: [
     .target(
+      name: "AppFeature",
+      dependencies: [
+        .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+        "NewAndNowFeature",
+        "UserNotificationClient"
+      ]
+    ),
+    .target(
       name: "NewAndNowFeature",
       dependencies: [
         .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
@@ -30,6 +42,7 @@ let package = Package(
         "WebtoonDetailFeature",
         "ApiClient",
         "LocalDatabaseClient",
+        "UserNotificationClient",
         "SharedModels",
         "ViewHelper"
       ]
