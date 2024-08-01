@@ -59,6 +59,10 @@ let package = Package(
       ]
     ),
     .target(
+      name: "UserNotificationClient",
+      dependencies: [.product(name: "ComposableArchitecture", package: "swift-composable-architecture")]
+    ),
+    .target(
       name: "ViewHelper",
       dependencies: [
         .product(name: "Perception", package: "swift-perception"),
