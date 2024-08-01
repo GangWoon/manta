@@ -104,6 +104,7 @@ public struct NewAndNowCore: Sendable {
         state.notificationItems = webtoonRows
           .filter(\.isNotified)
           .compactMap(\.notificationItem)
+          .sorted()
         return .none
         
       case .notificationItemTapped:
