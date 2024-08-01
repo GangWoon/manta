@@ -82,12 +82,20 @@ struct WebtoonNotificationItemList: View {
   }
 }
 
-private let comparedDate: Date = {
-  var calendar = Calendar.current
-  calendar.timeZone = TimeZone(identifier: "Asia/Seoul")!
-  let dateComponents = DateComponents(year: 2024, month: 7, day: 3)
-  return calendar.date(from: dateComponents)!
-}()
+extension Date {
+   private static var calendar = Calendar.current
+  
+  static let comparedDate: Date = {
+    calendar.timeZone = TimeZone(identifier: "Asia/Seoul")!
+    let dateComponents = DateComponents(year: 2024, month: 7, day: 3)
+    return calendar.date(from: dateComponents)!
+  }()
+  
+  var daysDifference:  Int {
+    let components = Self.calendar.dateComponents([.day], from: .comparedDate, to: self)
+    return components.day ?? 0
+  }
+}
 
 extension NewAndNowCore.State.NotificationItem: Comparable {
   public static func < (lhs: Self, rhs: Self) -> Bool {
@@ -97,18 +105,12 @@ extension NewAndNowCore.State.NotificationItem: Comparable {
 
 private extension NewAndNowCore.State.NotificationItem {
   var nowAvailable: Bool {
-    daysDifference(from: comparedDate, to: releaseDate) <= 0
+    releaseDate.daysDifference <= 0
   }
   
   var dDay: String {
-    let diff = daysDifference(from: comparedDate, to: releaseDate)
+    let diff = releaseDate.daysDifference
     return diff <= 0 ? "Read now" : "D - \(diff)"
-  }
-  
-  private func daysDifference(from startDate: Date, to endDate: Date) -> Int {
-    let calendar = Calendar.current
-    let components = calendar.dateComponents([.day], from: startDate, to: endDate)
-    return components.day ?? 0
   }
 }
 

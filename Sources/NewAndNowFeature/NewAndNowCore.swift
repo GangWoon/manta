@@ -1,6 +1,8 @@
 import ComposableArchitecture
 import WebtoonDetailFeature
 import LocalDatabaseClient
+import UserNotificationClient
+import UserNotifications
 import SharedModels
 import Foundation
 import ApiClient
@@ -70,6 +72,7 @@ public struct NewAndNowCore: Sendable {
   }
   
   @Dependency(\.database) private var database
+  @Dependency(\.userNotifications) private var userNotifications
   @Dependency(\.apiClient) private var apiClient
   
   public init() { }
@@ -203,6 +206,29 @@ public struct NewAndNowCore: Sendable {
         } catch: { error, send in
           debugPrint(error)
           await send(.updateAlertState("데이터를 저장하는데 실패했습니다.\n잠시후 다시 시도해주세요.", false))
+        },
+        .run { _ in
+          if webtoonRow.isNotified {
+            if let releaseDate = webtoonRow.releaseDate, releaseDate.daysDifference == 0 {
+              let content = UNMutableNotificationContent()
+              content.title = webtoonRow.title
+              content.body = "Read Now Availbable!!"
+              let trigger = UNTimeIntervalNotificationTrigger(
+                timeInterval: 5,
+                repeats: false
+              )
+              let request = UNNotificationRequest(
+                identifier: webtoonRow.id.uuidString,
+                content: content,
+                trigger: trigger
+              )
+              try await userNotifications.add(request)
+            }
+          } else {
+            userNotifications.remove(id: webtoonRow.id.uuidString)
+          }
+        } catch: { error, _ in
+          debugPrint(error)
         }
       )
       
