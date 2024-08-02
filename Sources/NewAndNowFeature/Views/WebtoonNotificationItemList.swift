@@ -83,10 +83,13 @@ struct WebtoonNotificationItemList: View {
 }
 
 extension Date {
-   private static var calendar = Calendar.current
+  private static let calendar = {
+    var calendar = Calendar.current
+    calendar.timeZone = TimeZone(identifier: "Asia/Seoul")!
+    return calendar
+  }()
   
   static let comparedDate: Date = {
-    calendar.timeZone = TimeZone(identifier: "Asia/Seoul")!
     let dateComponents = DateComponents(year: 2024, month: 7, day: 3)
     return calendar.date(from: dateComponents)!
   }()
