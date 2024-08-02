@@ -3,8 +3,8 @@ import UserNotificationClient
 import Foundation
 
 @Reducer
-public struct AppDelegateReducer {
-  public struct State: Equatable {
+public struct AppDelegateReducer: Sendable {
+  public struct State: Equatable, Sendable {
     public init() {}
   }
   
@@ -49,8 +49,9 @@ public struct AppDelegateReducer {
         }
         
       case .userNotifications(.willPresentNotification(_, completionHandler: let completion)):
-        completion(.banner)
-        return .none
+        return .run { _ in
+          completion(.banner)
+        }
       
       case .userNotifications:
         return .none

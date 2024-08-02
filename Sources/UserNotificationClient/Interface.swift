@@ -1,5 +1,5 @@
 import ComposableArchitecture
-import UserNotifications
+@preconcurrency import UserNotifications
 
 @DependencyClient
 public struct UserNotificationClient: Sendable {
@@ -10,12 +10,12 @@ public struct UserNotificationClient: Sendable {
   public var requestAuthorization: @Sendable (_ options: UNAuthorizationOptions) async throws -> Bool
   
   @CasePathable
-  public enum DelegateEvent {
+  public enum DelegateEvent: Sendable {
     case didReceiveResponse(Notification.Response, completionHandler: @Sendable () -> Void)
     case willPresentNotification(Notification, completionHandler: @Sendable (UNNotificationPresentationOptions) -> Void)
   }
   
-  public struct Notification: Equatable {
+  public struct Notification: Equatable, Sendable {
     public var date: Date
     public var request: UNNotificationRequest
     
@@ -27,7 +27,7 @@ public struct UserNotificationClient: Sendable {
       self.request = request
     }
     
-    public struct Response: Equatable {
+    public struct Response: Equatable, Sendable {
       public var notification: Notification
       
       public init(notification: Notification) {

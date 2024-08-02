@@ -1,23 +1,23 @@
 import UserNotifications
 import Dependencies
 
-extension UserNotificationClient: DependencyKey {
+extension UserNotificationClient: @preconcurrency DependencyKey {
+  @MainActor
   public static var liveValue: UserNotificationClient = {
-    let center = UNUserNotificationCenter.current()
     return .init(
-      add: { try await center.add($0) },
-      remove: { center.removePendingNotificationRequests(withIdentifiers: [$0]) },
+      add: { try await UNUserNotificationCenter.current().add($0) },
+      remove: { UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [$0]) },
       delegate: {
         .init { continuation in
           let delegate = Delegate(continuation: continuation)
-          center.delegate = delegate
+          UNUserNotificationCenter.current().delegate = delegate
           continuation.onTermination = { _ in
             _ = delegate
           }
         }
       },
-      getNotificationSettings: { await .init(rawValue: center.notificationSettings()) },
-      requestAuthorization: { try await center.requestAuthorization(options: $0) }
+      getNotificationSettings: { await .init(rawValue: UNUserNotificationCenter.current().notificationSettings()) },
+      requestAuthorization: { try await UNUserNotificationCenter.current().requestAuthorization(options: $0) }
     )
   }()
 }
@@ -42,7 +42,7 @@ extension UserNotificationClient.Notification.Settings {
 }
 
 extension UserNotificationClient {
-  fileprivate final class Delegate: NSObject, UNUserNotificationCenterDelegate {
+  fileprivate final class Delegate: NSObject, UNUserNotificationCenterDelegate, Sendable {
     let continuation: AsyncStream<UserNotificationClient.DelegateEvent>.Continuation
     
     init(continuation: AsyncStream<UserNotificationClient.DelegateEvent>.Continuation) {
@@ -51,22 +51,28 @@ extension UserNotificationClient {
     
     func userNotificationCenter(
       _ center: UNUserNotificationCenter,
-      didReceive response: UNNotificationResponse,
-      withCompletionHandler completionHandler: @escaping () -> Void
-    ) {
-      continuation.yield(
-        .didReceiveResponse(.init(rawValue: response)) { completionHandler() }
-      )
+      didReceive response: UNNotificationResponse
+    ) async {
+      await withCheckedContinuation { continuation in
+        self.continuation.yield(
+          .didReceiveResponse(.init(rawValue: response)) {
+            continuation.resume()
+          }
+        )
+      }
     }
     
     func userNotificationCenter(
       _ center: UNUserNotificationCenter,
-      willPresent notification: UNNotification,
-      withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
-    ) {
-      continuation.yield(
-        .willPresentNotification(.init(rawValue: notification)) { completionHandler($0) }
-      )
+      willPresent notification: UNNotification
+    ) async -> UNNotificationPresentationOptions {
+      await withCheckedContinuation { continutaion in
+        self.continuation.yield(
+          .willPresentNotification(.init(rawValue: notification)) {
+            continutaion.resume(returning: $0)
+          }
+        )
+      }
     }
   }
 }
