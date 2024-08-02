@@ -36,7 +36,9 @@ extension View {
   }
 }
 
-struct ScrollOffsetKey: @preconcurrency PreferenceKey {
+// MARK: - Swift 6.0
+//struct ScrollOffsetKey: @preconcurrency PreferenceKey {
+struct ScrollOffsetKey: PreferenceKey {
   @MainActor static var defaultValue: CGFloat = .zero
   static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
   }

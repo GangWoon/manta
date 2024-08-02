@@ -72,23 +72,49 @@ extension WebtoonInfoView {
 }
 
 #if DEBUG
-@available(iOS 18.0, *)
-#Preview {
-  @Previewable @State var isExpanded: Bool = false
+//@available(iOS 18.0, *)
+//#Preview {
+//  @Previewable @State var isExpanded: Bool = false
+//
+//  WebtoonInfoView(
+//    isExpanded: $isExpanded,
+//    state: .init(
+//      summary: "A turn of fate... by your own hand.\nAlicia Melfont vows to restore the former glory of her house after the Dark God's agent massacres her family. But when a mysterious book reveals that she's only a supporting character meant to die for the true protagonist of the story, Alicia decides she won't let some silly book determine her fate.",
+//      ageRating: "17+",
+//      tags: ["Fantasy", "Romance", "Coming of age", "Free Pass", "Fight the system", "Mythical", "Reincarnation", "Survival", "Girl crush", "Has it rough", "Knight", "Nice guy", "Soulmate", "Kingdom", "Emotional", "Inspirational", "Magical", "Exclusive"],
+//      creators: .init(
+//        production: "Team LYCHEE",
+//        illustration: "Lee Mi Nu",
+//        writer: "Lee Mi Nu",
+//        localization: "Manta Comics"
+//      )
+//    )
+//  )
+//}
+
+struct WebtoonInfoPreview: View {
+  @State var isExpanded: Bool = false
   
-  WebtoonInfoView(
-    isExpanded: $isExpanded,
-    state: .init(
-      summary: "A turn of fate... by your own hand.\nAlicia Melfont vows to restore the former glory of her house after the Dark God's agent massacres her family. But when a mysterious book reveals that she's only a supporting character meant to die for the true protagonist of the story, Alicia decides she won't let some silly book determine her fate.",
-      ageRating: "17+",
-      tags: ["Fantasy", "Romance", "Coming of age", "Free Pass", "Fight the system", "Mythical", "Reincarnation", "Survival", "Girl crush", "Has it rough", "Knight", "Nice guy", "Soulmate", "Kingdom", "Emotional", "Inspirational", "Magical", "Exclusive"],
-      creators: .init(
-        production: "Team LYCHEE",
-        illustration: "Lee Mi Nu",
-        writer: "Lee Mi Nu",
-        localization: "Manta Comics"
+  var body: some View {
+    WebtoonInfoView(
+      isExpanded: $isExpanded,
+      state: .init(
+        summary: "A turn of fate... by your own hand.\nAlicia Melfont vows to restore the former glory of her house after the Dark God's agent massacres her family. But when a mysterious book reveals that she's only a supporting character meant to die for the true protagonist of the story, Alicia decides she won't let some silly book determine her fate.",
+        ageRating: "17+",
+        tags: ["Fantasy", "Romance", "Coming of age", "Free Pass", "Fight the system", "Mythical", "Reincarnation", "Survival", "Girl crush", "Has it rough", "Knight", "Nice guy", "Soulmate", "Kingdom", "Emotional", "Inspirational", "Magical", "Exclusive"],
+        creators: .init(
+          production: "Team LYCHEE",
+          illustration: "Lee Mi Nu",
+          writer: "Lee Mi Nu",
+          localization: "Manta Comics"
+        )
       )
     )
-  )
+  }
+}
+
+@available(iOS 17.0, *)
+#Preview {
+  WebtoonInfoPreview()
 }
 #endif

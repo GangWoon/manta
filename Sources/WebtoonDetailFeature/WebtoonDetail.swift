@@ -9,6 +9,36 @@ public struct WebtoonDetail {
   public struct State: Equatable, Sendable {
     public var buttons: [ButtonType]
     public enum ButtonType: Hashable, Sendable {
+      /// ViewState이지만, circular cycle issue 때문에 상태값 내부로 이동시켰습니다.
+      var imageName: String {
+        switch self {
+        case .save:
+          return "plus"
+        case .notification(let isNotified):
+          return isNotified ? "bell.fill" : "bell"
+        case .rate:
+          return "hand.thumbsup"
+        case .download:
+          return "arrow.down.to.line"
+        case .highlights:
+          return "photo.circle"
+        }
+      }
+      
+      var title: String {
+        switch self {
+        case .save:
+          return "Save"
+        case .notification:
+          return "Notification"
+        case .rate:
+          return "Rate"
+        case .download:
+          return "Download"
+        case .highlights:
+          return "Highlights"
+        }
+      }
       case save
       case notification(Bool)
       case rate
@@ -309,38 +339,6 @@ private let dateFormatter: DateFormatter = {
   
   return formatter
 }()
-
-private extension WebtoonDetail.State.ButtonType {
-  var imageName: String {
-    switch self {
-    case .save:
-      return "plus"
-    case .notification(let isNotified):
-      return isNotified ? "bell.fill" : "bell"
-    case .rate:
-      return "hand.thumbsup"
-    case .download:
-      return "arrow.down.to.line"
-    case .highlights:
-      return "photo.circle"
-    }
-  }
-  
-  var title: String {
-    switch self {
-    case .save:
-      return "Save"
-    case .notification:
-      return "Notification"
-    case .rate:
-      return "Rate"
-    case .download:
-      return "Download"
-    case .highlights:
-      return "Highlights"
-    }
-  }
-}
 
 #if DEBUG
 struct WebtoonDetailTest: View {

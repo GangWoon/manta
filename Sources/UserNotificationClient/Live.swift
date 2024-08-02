@@ -1,7 +1,9 @@
 import UserNotifications
 import Dependencies
 
-extension UserNotificationClient: @preconcurrency DependencyKey {
+// MARK: - Swift 6.0
+//extension UserNotificationClient: @preconcurrency DependencyKey {
+extension UserNotificationClient: DependencyKey {
   @MainActor
   public static var liveValue: UserNotificationClient = {
     return .init(

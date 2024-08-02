@@ -87,10 +87,11 @@ public extension View {
   }
 }
 
+#if DEBUG
 //@available(iOS 18.0, *)
 //#Preview {
 //  @Previewable @State var isSelected: Bool = false
-//  
+//
 //  Button(action: { isSelected.toggle() }) {
 //    Image(
 //      systemName: isSelected
@@ -100,3 +101,24 @@ public extension View {
 //  }
 //  .wiggleAnimation(isSelected: isSelected)
 //}
+
+struct WiggleAnimationPreview: View {
+  @State var isSelected: Bool = false
+  
+  var body: some View {
+    Button(action: { isSelected.toggle() }) {
+      Image(
+        systemName: isSelected
+        ? "bell.fill"
+        : "bell"
+      )
+    }
+    .wiggleAnimation(isSelected: isSelected)
+  }
+}
+
+@available(iOS 17.0, *)
+#Preview {
+  WiggleAnimationPreview()
+}
+#endif

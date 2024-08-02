@@ -12,7 +12,9 @@ extension View {
   }
 }
 
-struct SizePreferenceKey: @preconcurrency PreferenceKey {
+// MARK: - Swift 6.0
+//struct SizePreferenceKey: @preconcurrency PreferenceKey {
+struct SizePreferenceKey: PreferenceKey {
   @MainActor static var defaultValue: CGSize = .zero
   static func reduce(value: inout CGSize, nextValue: () -> CGSize) {
   }

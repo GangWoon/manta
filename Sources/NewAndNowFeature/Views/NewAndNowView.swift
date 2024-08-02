@@ -216,6 +216,7 @@ extension NewAndNowCore.State.ReleaseStatus {
   }
 }
 
+#if DEBUG
 #Preview {
   NewAndNowView(
     store: Store(
@@ -225,3 +226,4 @@ extension NewAndNowCore.State.ReleaseStatus {
     }
   )
 }
+#endif

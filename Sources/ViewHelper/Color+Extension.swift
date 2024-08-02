@@ -32,11 +32,15 @@ public struct Manta {
 }
 
 extension Color {
-  @MainActor public static let manta: Manta = .init()
+//  MARK: - Swift 6.0
+//  @MainActor
+  public static let manta: Manta = .init()
 }
 
 extension ShapeStyle where Self == Color {
-  @MainActor public static var manta: Manta {
+//  MARK: - Swift 6.0
+//  @MainActor
+  public static var manta: Manta {
     Color.manta
   }
 }
