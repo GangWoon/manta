@@ -11,14 +11,12 @@ import ApiClient
 public struct NewAndNowCore: Sendable {
   @ObservableState
   public struct State: Equatable, Sendable {
-    /// 복잡한 스크롤 뷰 로직은 뷰에서만 처리하려고 설계했지만, 스크롤 뷰 해더를 강제적으로 노출시키기 위해서 만든 값입니다.
-    public var forceShowingHeader: Bool = false
-    
     public var webtoons: IdentifiedArrayOf<Webtoon> = []
     public var webtoonRows: IdentifiedArrayOf<WebtoonCore.State> = []
     public var selectedWebtoonRow: WebtoonDetail.State?
     public var selectedReleaseStatus: ReleaseStatus = .comingSoon
     public let releaseCategories: [ReleaseStatus] = ReleaseStatus.allCases
+    public var isHeaderVisible: Bool = false
     public enum ReleaseStatus: Hashable, Sendable, CaseIterable {
       case comingSoon
       case newArrivals
@@ -34,20 +32,20 @@ public struct NewAndNowCore: Sendable {
     @Presents public var alert: AlertState<Action.Alert>?
     
     public init(
-      forceShowingHeader: Bool = false,
       webtoons: IdentifiedArrayOf<Webtoon> = [],
       webtoonRows: IdentifiedArrayOf<WebtoonCore.State> = [],
       selectedWebtoonRow: WebtoonDetail.State? = nil,
       selectedReleaseStatus: ReleaseStatus = .comingSoon,
+      isHeaderVisible: Bool = false,
       notificationItemScrollID: NotificationItem.ID? = nil,
       notificationItems: [NotificationItem] = [],
       alert: AlertState<Action.Alert>? = nil
     ) {
-      self.forceShowingHeader = forceShowingHeader
       self.webtoons = webtoons
       self.webtoonRows = webtoonRows
       self.selectedWebtoonRow = selectedWebtoonRow
       self.selectedReleaseStatus = selectedReleaseStatus
+      self.isHeaderVisible = isHeaderVisible
       self.notificationItemScrollID = notificationItemScrollID
       self.notificationItems = notificationItems
       self.alert = alert
@@ -187,7 +185,7 @@ public struct NewAndNowCore: Sendable {
       guard
         webtoonRow.releaseStatus == .comingSoon
       else { return .none }
-      state.forceShowingHeader = true
+      state.isHeaderVisible = true
       if webtoonRow.isNotified,
          let item = webtoonRow.notificationItem {
         state.notificationItems.insertSorted(item)

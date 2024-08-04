@@ -6,7 +6,6 @@ import ApiClient
 import SwiftUI
 
 public struct NewAndNowView: View {
-  @State private var showingHeader = true
   @State private var turningPoint = CGFloat.zero
   @State private var categoryChangeThreshold: CGFloat = .zero
   @State private var isScrolling: Bool = false
@@ -27,7 +26,7 @@ public struct NewAndNowView: View {
         dashboard
           .padding(.horizontal, 16)
         
-        if showingHeader && !store.notificationItems.isEmpty {
+        if store.isHeaderVisible && !store.notificationItems.isEmpty {
           WebtoonNotificationItemList(
             notificationItems: store.notificationItems,
             scrollID: store.notificationItemScrollID,
@@ -55,8 +54,7 @@ public struct NewAndNowView: View {
         categoryChangeThreshold = Array($0).categoryChangeThreshold
       }
       .task { await store.send(.prepare).finish() }
-      .bind($showingHeader, to: $store.forceShowingHeader)
-      .animation(.easeInOut, value: showingHeader)
+      .animation(.easeInOut, value: store.isHeaderVisible)
       .background { Color.manta.deepGray.ignoresSafeArea() }
       .overlay {
         /// NOTE: Multiple inserted views 경고가 발생하지만, 뷰에 직접적인 문제는 발생하지 않습니다.
@@ -163,16 +161,16 @@ public struct NewAndNowView: View {
   private func updateShowingHeader(oldValue: CGFloat, newValue: CGFloat) {
     let thresholdScrollDistance: CGFloat = 50
     if
-      (showingHeader && newValue > oldValue)
-        || (!showingHeader && newValue < oldValue)
+      (store.isHeaderVisible && newValue > oldValue)
+        || (!store.isHeaderVisible && newValue < oldValue)
     {
       turningPoint = newValue
     }
     if
-      (showingHeader && turningPoint > newValue)
-        || (!showingHeader && (newValue - turningPoint) > thresholdScrollDistance)
+      (store.isHeaderVisible && turningPoint > newValue)
+        || (!store.isHeaderVisible && (newValue - turningPoint) > thresholdScrollDistance)
     {
-      showingHeader = newValue > turningPoint
+      store.send(.binding(.set(\.isHeaderVisible,  newValue > turningPoint)))
     }
   }
   
