@@ -22,7 +22,8 @@
 <br>
 
 ### 🪟 구현 화면
-[YouTube](https://www.youtube.com/shorts/RCOqh8B028M) 링크를 누르시면, 앱 전체 플로우를 확인하실 수 있습니다. <br>
+
+[YouTube](https://www.youtube.com/shorts/ew8WiE-2bX4) 링크를 누르시면, 앱 전체 플로우를 확인하실 수 있습니다. <br>
 ![Group 5](https://github.com/user-attachments/assets/6e32ae04-221e-46d2-bdf0-886cc3ce5678) <br>
 
 ### [issue](https://github.com/GangWoon/manta/issues?q=is%3Aissue+is%3Aclosed)
